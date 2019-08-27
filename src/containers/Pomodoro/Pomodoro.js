@@ -23,11 +23,11 @@ class Pomodoro extends Component {
   state = {
     timerIsRunning: false,
     seconds: 5,
-    sessionEndSound: Sound.status.STOPPED
+    sessionSoundStatus: Sound.status.STOPPED
   };
 
   handleStartButton = () => {
-    this.setState({ timerIsRunning: true, sessionEndSound: Sound.status.STOPPED });
+    this.setState({ timerIsRunning: true, sessionSoundStatus: Sound.status.STOPPED });
     const timer = setInterval(() => {
       const { seconds } = this.state;
       this.setState({ seconds: seconds - 1 });
@@ -36,17 +36,17 @@ class Pomodoro extends Component {
     const { seconds } = this.state;
     const timeout = setTimeout(() => {
       clearInterval(timer);
-      this.setState({ timerIsRunning: false, seconds: seconds, sessionEndSound: Sound.status.PLAYING });
+      this.setState({ timerIsRunning: false, seconds: seconds, sessionSoundStatus: Sound.status.PLAYING });
     }, seconds * 1000);
   };
 
 
   render() {
-    const { seconds, timerIsRunning, sessionEndSound } = this.state;
+    const { seconds, timerIsRunning, sessionSoundStatus } = this.state;
     return (
       <TimerBox>
         <RemainingTime remainingSeconds={seconds} />
-        <Sound url={gongSound} playStatus={sessionEndSound}/>
+        <Sound url={gongSound} playStatus={sessionSoundStatus}/>
         <Button onClick={this.handleStartButton} disabled={timerIsRunning}>
           start
         </Button>
