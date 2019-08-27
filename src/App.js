@@ -1,13 +1,12 @@
 import React from 'react';
-//import Pomodoro from './containers/Pomodoro/Pomodoro';
-import RemainingTime from './components/RemainingTime';
+import Pomodoro from './containers/Pomodoro/Pomodoro';
 
 
 function App() {
 
   return (
     <div>
-      <RemainingTime remainingSeconds='200' />
+      <Pomodoro  />
     </div>
   );
 }
