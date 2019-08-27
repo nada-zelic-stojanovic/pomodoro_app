@@ -11,9 +11,6 @@ const TimerBox = styled.div`
 `;
 
 const StartButton = styled.button``;
-const StopButton = styled.button``;
-const PauseButton = styled.button``;
-const ResetButton = styled.button``;
 
 class Pomodoro extends Component {
   state = {
@@ -22,17 +19,17 @@ class Pomodoro extends Component {
   };
 
   handleStartButton = () => {
-    this.setState({timerIsRunning: true})
+    this.setState({ timerIsRunning: true });
     const timer = setInterval(() => {
       const { seconds } = this.state;
-      this.setState({seconds: seconds - 1 });
+      this.setState({ seconds: seconds - 1 });
     }, 1000);
 
     const { seconds } = this.state;
     const timeout = setTimeout(() => {
       clearInterval(timer);
-     
-      this.setState({timerIsRunning: false, seconds: seconds})
+
+      this.setState({ timerIsRunning: false, seconds: seconds });
     }, seconds * 1000);
   };
 
@@ -41,7 +38,10 @@ class Pomodoro extends Component {
     return (
       <TimerBox>
         <RemainingTime remainingSeconds={seconds} />
-        <StartButton onClick={this.handleStartButton} disabled={timerIsRunning}>start</StartButton>
+        <StartButton onClick={this.handleStartButton} disabled={timerIsRunning}>
+          start
+        </StartButton>
+        >
       </TimerBox>
     );
   }
