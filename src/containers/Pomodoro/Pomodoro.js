@@ -42,13 +42,15 @@ class Pomodoro extends Component {
     const { seconds } = this.state;
     const timeout = setTimeout(() => {
       clearInterval(timer);
-      if (Notification.permission === 'granted') {
-        console.log('asdf');
-        const notification = new Notification(
-          "Session expired! It's break time!"
-        );
-      } else {
-        console.log('permission denied');
+      if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+          console.log('asdf');
+          const notification = new Notification(
+            "Session expired! It's break time!"
+          );
+        } else {
+          console.log('Permission to show notifications denied :(');
+        }
       }
       this.setState({
         timerIsRunning: false,
