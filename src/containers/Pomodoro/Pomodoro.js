@@ -26,8 +26,14 @@ class Pomodoro extends Component {
     sessionSoundStatus: Sound.status.STOPPED
   };
 
+  componentDidMount = () => {
+    if ('Notification' in window) {
+      Notification.requestPermission();
+    }
+  };
+
   handleStartButton = () => {
-    this.setState({ timerIsRunning: true, sessionSoundStatus: Sound.status.STOPPED });
+    this.setState({ timerIsRunning: true });
     const timer = setInterval(() => {
       const { seconds } = this.state;
       this.setState({ seconds: seconds - 1 });
@@ -36,17 +42,38 @@ class Pomodoro extends Component {
     const { seconds } = this.state;
     const timeout = setTimeout(() => {
       clearInterval(timer);
-      this.setState({ timerIsRunning: false, seconds: seconds, sessionSoundStatus: Sound.status.PLAYING });
+      if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+          console.log('asdf');
+          const notification = new Notification(
+            "Session expired! It's break time!"
+          );
+        } else {
+          console.log('Permission to show notifications denied :(');
+        }
+      }
+      this.setState({
+        timerIsRunning: false,
+        seconds: seconds,
+        sessionSoundStatus: Sound.status.PLAYING
+      });
     }, seconds * 1000);
   };
 
+  stopSessionEndingSound = () => {
+    this.setState({ sessionSoundStatus: Sound.status.STOPPED });
+  };
 
   render() {
     const { seconds, timerIsRunning, sessionSoundStatus } = this.state;
     return (
       <TimerBox>
         <RemainingTime remainingSeconds={seconds} />
-        <Sound url={gongSound} playStatus={sessionSoundStatus}/>
+        <Sound
+          url={gongSound}
+          playStatus={sessionSoundStatus}
+          onFinishedPlaying={this.stopSessionEndingSound}
+        />
         <Button onClick={this.handleStartButton} disabled={timerIsRunning}>
           start
         </Button>
