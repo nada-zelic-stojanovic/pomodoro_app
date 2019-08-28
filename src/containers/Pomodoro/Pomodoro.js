@@ -36,8 +36,13 @@ class Pomodoro extends Component {
   };
   
   startTimer = isBreak => {
-    if (!isBreak) {
-      this.setState({ timerIsRunning: true, isBreak });
+    
+      this.setState({
+        timerIsRunning: true,
+        isBreak,
+        seconds: isBreak ? 3 : 5
+      });
+
       const timer = setInterval(() => {
         const { seconds } = this.state;
         this.setState({ seconds: seconds - 1 });
@@ -58,38 +63,58 @@ class Pomodoro extends Component {
         }
         this.setState({
           timerIsRunning: false,
-          seconds: seconds,
-          sessionSoundStatus: Sound.status.PLAYING,
-          isBreak: true
+          sessionSoundStatus: !isBreak ? Sound.status.PLAYING : null,
+          breakSoundStatus: isBreak ? Sound.status.PLAYING : null,
+          isBreak: !this.state.isBreak
         });
-        this.startTimer(true);
+        this.startTimer(!isBreak);
       }, seconds * 1000);
-    } else if (isBreak) {
+    
 
-      this.setState({ timerIsRunning: true, seconds: 3 });
-      const timer = setInterval(() => {
-        const { seconds } = this.state;
-        this.setState({ seconds: seconds - 1 });
-      }, 1000);
-      
-      const { seconds } = this.state;
-      setTimeout(() => {
-        clearInterval(timer);
-        this.setState({
-          timerIsRunning: false,
-          seconds: 5,
-          isBreak: false,
-          breakSoundStatus: Sound.status.PLAYING
-        });
-      }, seconds * 1000);
-    }
+    // if (!isBreak) {
+    //   this.setState({ timerIsRunning: true, isBreak });
+    //   const timer = setInterval(() => {
+    //     const { seconds } = this.state;
+    //     this.setState({ seconds: seconds - 1 });
+    //   }, 1000);
+
+    //   const { seconds } = this.state;
+    //   setTimeout(() => {
+    //     clearInterval(timer);
+    //     this.setState({
+    //       timerIsRunning: false,
+    //       seconds: seconds,
+    //       sessionSoundStatus: Sound.status.PLAYING,
+    //       isBreak: true
+    //     });
+    //     this.startTimer(true);
+    //   }, seconds * 1000);
+    // }
+
+    // else if (isBreak) {
+
+    //   this.setState({ timerIsRunning: true, seconds: 3, isBreak: false });
+    //   const timer = setInterval(() => {
+    //     const { seconds } = this.state;
+    //     this.setState({ seconds: seconds - 1 });
+    //   }, 1000);
+
+    //   const { seconds } = this.state;
+    //   setTimeout(() => {
+    //     clearInterval(timer);
+    //     this.setState({
+    //       timerIsRunning: false,
+    //       seconds: 5,
+    //       isBreak: false,
+    //       breakSoundStatus: Sound.status.PLAYING
+    //     });
+    //   }, seconds * 1000);
+    // }
   };
 
   handleStartButton = () => {
     this.startTimer(false);
   };
-
-  
 
   stopSessionEndingSound = () => {
     this.setState({ sessionSoundStatus: Sound.status.STOPPED });
@@ -97,10 +122,16 @@ class Pomodoro extends Component {
 
   stopBreakEndingSound = () => {
     this.setState({ breakSoundStatus: Sound.status.STOPPED });
-  }
+  };
 
   render() {
-    const { seconds, timerIsRunning, sessionSoundStatus, isBreak, breakSoundStatus } = this.state;
+    const {
+      seconds,
+      timerIsRunning,
+      sessionSoundStatus,
+      isBreak,
+      breakSoundStatus
+    } = this.state;
 
     return (
       <TimerBox>
