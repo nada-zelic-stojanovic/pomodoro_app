@@ -1,12 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const RemainingTime = ({ remainingSeconds, breakTime }) => {
+const RemainingTime = ({ remainingSeconds }) => {
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
   return (
     <div>
-        <h2>{breakTime ? "BREAK" : "SESSION"}</h2>
       <Time>
         {minutes} : {seconds}
       </Time>
