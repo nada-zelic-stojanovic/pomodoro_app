@@ -20,10 +20,13 @@ const Button = styled.button`
   border-style: none;
 `;
 
+const SESSION_LENGTH = 5;
+const BREAK_LENGTH = 3;
+
 class Pomodoro extends Component {
   state = {
     timerIsRunning: false,
-    seconds: 5,
+    seconds: SESSION_LENGTH,
     sessionSoundStatus: Sound.status.STOPPED,
     isBreak: false,
     breakSoundStatus: Sound.status.STOPPED
@@ -36,80 +39,42 @@ class Pomodoro extends Component {
   };
   
   startTimer = isBreak => {
-    
-      this.setState({
-        timerIsRunning: true,
-        isBreak,
-        seconds: isBreak ? 3 : 5
-      });
+    const seconds = isBreak ? BREAK_LENGTH : SESSION_LENGTH;
+    this.setState({
+      timerIsRunning: true,
+      isBreak,
+      seconds
+    });
 
-      const timer = setInterval(() => {
-        const { seconds } = this.state;
-        this.setState({ seconds: seconds - 1 });
-      }, 1000);
-
+    const timer = setInterval(() => {
       const { seconds } = this.state;
-      setTimeout(() => {
-        clearInterval(timer);
-        if ('Notification' in window) {
-          if (Notification.permission === 'granted') {
-            console.log('asdf');
-            const notification = new Notification(
-              "Session expired! It's break time!"
-            );
-          } else {
-            console.log('Permission to show notifications denied :(');
-          }
-        }
-        this.setState({
-          timerIsRunning: false,
-          sessionSoundStatus: !isBreak ? Sound.status.PLAYING : null,
-          breakSoundStatus: isBreak ? Sound.status.PLAYING : null,
-          isBreak: !this.state.isBreak
-        });
-        this.startTimer(!isBreak);
-      }, seconds * 1000);
+      this.setState({ seconds: seconds - 1 });
+    }, 1000);
+
     
-
-    // if (!isBreak) {
-    //   this.setState({ timerIsRunning: true, isBreak });
-    //   const timer = setInterval(() => {
-    //     const { seconds } = this.state;
-    //     this.setState({ seconds: seconds - 1 });
-    //   }, 1000);
-
-    //   const { seconds } = this.state;
-    //   setTimeout(() => {
-    //     clearInterval(timer);
-    //     this.setState({
-    //       timerIsRunning: false,
-    //       seconds: seconds,
-    //       sessionSoundStatus: Sound.status.PLAYING,
-    //       isBreak: true
-    //     });
-    //     this.startTimer(true);
-    //   }, seconds * 1000);
-    // }
-
-    // else if (isBreak) {
-
-    //   this.setState({ timerIsRunning: true, seconds: 3, isBreak: false });
-    //   const timer = setInterval(() => {
-    //     const { seconds } = this.state;
-    //     this.setState({ seconds: seconds - 1 });
-    //   }, 1000);
-
-    //   const { seconds } = this.state;
-    //   setTimeout(() => {
-    //     clearInterval(timer);
-    //     this.setState({
-    //       timerIsRunning: false,
-    //       seconds: 5,
-    //       isBreak: false,
-    //       breakSoundStatus: Sound.status.PLAYING
-    //     });
-    //   }, seconds * 1000);
-    // }
+    setTimeout(() => {
+      clearInterval(timer);
+      if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+          console.log('asdf');
+          const notification = new Notification(
+            "Session expired! It's break time!"
+          );
+        } else {
+          console.log('Permission to show notifications denied :(');
+        }
+      }
+      this.setState({
+        timerIsRunning: false,
+        sessionSoundStatus: !isBreak ? Sound.status.PLAYING : null,
+        breakSoundStatus: isBreak ? Sound.status.PLAYING : null,
+        isBreak: !this.state.isBreak,
+        seconds: isBreak ? SESSION_LENGTH : 0
+      });
+      if (!isBreak) {
+        this.startTimer(!isBreak);
+      }
+    }, seconds * 1000);
   };
 
   handleStartButton = () => {
