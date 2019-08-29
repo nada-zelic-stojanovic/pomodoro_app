@@ -37,7 +37,7 @@ class Pomodoro extends Component {
       Notification.requestPermission();
     }
   };
-  
+
   startTimer = isBreak => {
     const seconds = isBreak ? BREAK_LENGTH : SESSION_LENGTH;
     this.setState({
@@ -51,19 +51,23 @@ class Pomodoro extends Component {
       this.setState({ seconds: seconds - 1 });
     }, 1000);
 
-    
     setTimeout(() => {
       clearInterval(timer);
+
       if ('Notification' in window) {
         if (Notification.permission === 'granted') {
-          console.log('asdf');
-          const notification = new Notification(
-            "Session expired! It's break time!"
-          );
+          if (isBreak) {
+            const notification = new Notification('Break time is over!');
+          } else {
+            const notification = new Notification(
+              "Session expired! It's break time!"
+            );
+          }
         } else {
           console.log('Permission to show notifications denied :(');
         }
       }
+
       this.setState({
         timerIsRunning: false,
         sessionSoundStatus: !isBreak ? Sound.status.PLAYING : null,
@@ -71,6 +75,7 @@ class Pomodoro extends Component {
         isBreak: !this.state.isBreak,
         seconds: isBreak ? SESSION_LENGTH : 0
       });
+
       if (!isBreak) {
         this.startTimer(!isBreak);
       }
@@ -100,6 +105,7 @@ class Pomodoro extends Component {
 
     return (
       <TimerBox>
+        <h2>{isBreak ? "BREAK" : "SESSION"}</h2>
         <RemainingTime remainingSeconds={seconds} />
         <Sound
           url={gongSound}
