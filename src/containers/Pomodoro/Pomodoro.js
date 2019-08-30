@@ -112,26 +112,18 @@ class Pomodoro extends Component {
       sessionCount
     } = this.state;
 
-    const currentSessionNumber =
-      `Current session number: ${sessionCount}`;
-    const completedSessions = `Completed  ${sessionCount} sessions`;
-
     return (
       <TimerBox>
         <h2>{isBreak && sessionCount % 4 === 0 && 'LONG'}</h2>
         <h2>{isBreak ? 'BREAK' : 'SESSION'}</h2>
         <RemainingTime remainingSeconds={seconds} />
         <h4>
-          {!isBreak
-            ? timerIsRunning
-              ? currentSessionNumber
-              : completedSessions
-            : currentSessionNumber % 4 === 0
-            ? null
-            : completedSessions}
+          {timerIsRunning && !isBreak
+            ? `Current session: ${sessionCount}`
+            : `Completed  ${sessionCount} sessions`}
         </h4>
 
-        {/* <Sound
+        <Sound
           url={gongSound}
           playStatus={sessionSoundStatus}
           onFinishedPlaying={this.stopSessionEndingSound}
@@ -140,7 +132,7 @@ class Pomodoro extends Component {
           url={bongSound}
           playStatus={breakSoundStatus}
           onFinishedPlaying={this.stopBreakEndingSound}
-        /> */}
+        />
         <Button onClick={this.handleStartButton} disabled={timerIsRunning}>
           start
         </Button>
