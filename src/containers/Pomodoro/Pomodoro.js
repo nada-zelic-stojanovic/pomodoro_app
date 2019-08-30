@@ -31,7 +31,8 @@ class Pomodoro extends Component {
     sessionSoundStatus: Sound.status.STOPPED,
     isBreak: false,
     breakSoundStatus: Sound.status.STOPPED,
-    sessionCount: 0
+    sessionCount: 0,
+    isPaused: false
   };
 
   componentDidMount = () => {
@@ -54,27 +55,19 @@ class Pomodoro extends Component {
       seconds
     });
 
-    this.timer = setInterval(() => {
+    this.startIntervalAndTimeout(seconds, isBreak);
+  };
+
+  startIntervalAndTimeout = (seconds, isBreak) => {
+    this.interval = setInterval(() => {
       const { seconds } = this.state;
       this.setState({ seconds: seconds - 1 });
     }, 1000);
 
     this.timeout = setTimeout(() => {
-      clearInterval(this.timer);
+      clearInterval(this.interval);
 
-      if ('Notification' in window) {
-        if (Notification.permission === 'granted') {
-          if (isBreak) {
-            const notification = new Notification('Break time is over!');
-          } else {
-            const notification = new Notification(
-              "Session expired! It's break time!"
-            );
-          }
-        } else {
-          console.log('Permission to show notifications denied :(');
-        }
-      }
+      showNotification(isBreak);
 
       this.setState({
         timerIsRunning: false,
@@ -95,8 +88,8 @@ class Pomodoro extends Component {
   };
 
   handleStopButton = () => {
-    const {sessionCount, isBreak} = this.state;
-    clearInterval(this.timer);
+    const { sessionCount, isBreak } = this.state;
+    clearInterval(this.interval);
     clearTimeout(this.timeout);
     this.setState({
       timerIsRunning: false,
@@ -104,6 +97,24 @@ class Pomodoro extends Component {
       seconds: SESSION_LENGTH,
       sessionCount: isBreak ? sessionCount : sessionCount - 1
     });
+  };
+
+  pause = () => {
+    const { sessionCount, seconds } = this.state;
+    clearInterval(this.interval);
+    clearTimeout(this.timeout);
+    this.setState({
+      timerIsRunning: false,
+      seconds: seconds,
+      sessionCount: sessionCount,
+      isPaused: true
+    });
+  };
+
+  unpause = () => {
+    const { isBreak, seconds } = this.state;
+    this.setState({ isPaused: false, timerIsRunning: true });
+    this.startIntervalAndTimeout(seconds, isBreak);
   };
 
   stopSessionEndingSound = () => {
@@ -121,7 +132,8 @@ class Pomodoro extends Component {
       sessionSoundStatus,
       isBreak,
       breakSoundStatus,
-      sessionCount
+      sessionCount,
+      isPaused
     } = this.state;
 
     return (
@@ -130,7 +142,7 @@ class Pomodoro extends Component {
         <h2>{isBreak ? 'BREAK' : 'SESSION'}</h2>
         <RemainingTime remainingSeconds={seconds} />
         <h4>
-          {timerIsRunning && !isBreak
+          {(timerIsRunning || isPaused) && !isBreak
             ? `Current session: ${sessionCount}`
             : `Completed  ${sessionCount} sessions`}
         </h4>
@@ -149,9 +161,28 @@ class Pomodoro extends Component {
           start
         </Button>
         <Button onClick={this.handleStopButton}>stop</Button>
+        <Button onClick={isPaused? this.unpause : this.pause}>
+          {isPaused ? 'resume' : 'pause'}
+        </Button>
       </TimerBox>
     );
   }
 }
+
+const showNotification = isBreak => {
+  if ('Notification' in window) {
+    if (Notification.permission === 'granted') {
+      if (isBreak) {
+        const notification = new Notification('Break time is over!');
+      } else {
+        const notification = new Notification(
+          "Session expired! It's break time!"
+        );
+      }
+    } else {
+      console.log('Permission to show notifications denied :(');
+    }
+  }
+};
 
 export default Pomodoro;
