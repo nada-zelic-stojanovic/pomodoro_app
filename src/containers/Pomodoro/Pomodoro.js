@@ -20,8 +20,9 @@ const Button = styled.button`
   border-style: none;
 `;
 
-const SESSION_LENGTH = 10;
-let BREAK_LENGTH = 3;
+const SESSION_LENGTH = 2;
+const SHORT_BREAK_LENGTH = 1;
+const LONG_BREAK_LENGTH = 5;
 
 class Pomodoro extends Component {
   state = {
@@ -30,8 +31,7 @@ class Pomodoro extends Component {
     sessionSoundStatus: Sound.status.STOPPED,
     isBreak: false,
     breakSoundStatus: Sound.status.STOPPED,
-    sessionCount: 0,
-    prevSessionCount: 0
+    sessionCount: 0
   };
 
   componentDidMount = () => {
@@ -42,16 +42,12 @@ class Pomodoro extends Component {
 
   startTimer = isBreak => {
     const { sessionCount } = this.state;
-    BREAK_LENGTH = sessionCount >= 4 ? 5 : 3;
-    const seconds = isBreak ? BREAK_LENGTH : SESSION_LENGTH;
-    if (this.state.sessionCount >= 4) {
-      this.setState({ sessionCount: 0 });
-    } else {
-      this.setState({
-        sessionCount: !isBreak ? sessionCount + 1 : sessionCount,
-        prevSessionCount: !isBreak ? sessionCount + 1 : sessionCount
-      });
-    }
+    const breakLength =
+      sessionCount % 4 === 0 ? LONG_BREAK_LENGTH : SHORT_BREAK_LENGTH;
+    const seconds = isBreak ? breakLength : SESSION_LENGTH;
+    this.setState({
+      sessionCount: !isBreak ? sessionCount + 1 : sessionCount
+    });
     this.setState({
       timerIsRunning: true,
       isBreak,
@@ -113,22 +109,29 @@ class Pomodoro extends Component {
       sessionSoundStatus,
       isBreak,
       breakSoundStatus,
-      sessionCount,
-      prevSessionCount
+      sessionCount
     } = this.state;
 
     const currentSessionNumber =
-      'Current session number: ' + sessionCount + '/4';
-    const completedSessions = 'Completed ' + sessionCount + '/4 sessions';
+      `Current session number: ${sessionCount}`;
+    const completedSessions = `Completed  ${sessionCount} sessions`;
 
     return (
       <TimerBox>
-        <h2>{isBreak && prevSessionCount >= 4 ? 'LONG' : null}</h2>
+        <h2>{isBreak && sessionCount % 4 === 0 && 'LONG'}</h2>
         <h2>{isBreak ? 'BREAK' : 'SESSION'}</h2>
         <RemainingTime remainingSeconds={seconds} />
-        <h4>{!isBreak ? (timerIsRunning ? currentSessionNumber : completedSessions) : (prevSessionCount >= 4 ? null : completedSessions)}</h4>
+        <h4>
+          {!isBreak
+            ? timerIsRunning
+              ? currentSessionNumber
+              : completedSessions
+            : currentSessionNumber % 4 === 0
+            ? null
+            : completedSessions}
+        </h4>
 
-        <Sound
+        {/* <Sound
           url={gongSound}
           playStatus={sessionSoundStatus}
           onFinishedPlaying={this.stopSessionEndingSound}
@@ -137,7 +140,7 @@ class Pomodoro extends Component {
           url={bongSound}
           playStatus={breakSoundStatus}
           onFinishedPlaying={this.stopBreakEndingSound}
-        />
+        /> */}
         <Button onClick={this.handleStartButton} disabled={timerIsRunning}>
           start
         </Button>
