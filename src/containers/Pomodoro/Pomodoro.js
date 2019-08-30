@@ -20,8 +20,8 @@ const Button = styled.button`
   border-style: none;
 `;
 
-const SESSION_LENGTH = 2;
-const SHORT_BREAK_LENGTH = 1;
+const SESSION_LENGTH = 8;
+const SHORT_BREAK_LENGTH = 3;
 const LONG_BREAK_LENGTH = 5;
 
 class Pomodoro extends Component {
@@ -54,13 +54,13 @@ class Pomodoro extends Component {
       seconds
     });
 
-    const timer = setInterval(() => {
+    this.timer = setInterval(() => {
       const { seconds } = this.state;
       this.setState({ seconds: seconds - 1 });
     }, 1000);
 
-    setTimeout(() => {
-      clearInterval(timer);
+    this.timeout = setTimeout(() => {
+      clearInterval(this.timer);
 
       if ('Notification' in window) {
         if (Notification.permission === 'granted') {
@@ -94,6 +94,18 @@ class Pomodoro extends Component {
     this.startTimer(false);
   };
 
+  handleStopButton = () => {
+    const {sessionCount, isBreak} = this.state;
+    clearInterval(this.timer);
+    clearTimeout(this.timeout);
+    this.setState({
+      timerIsRunning: false,
+      isBreak: false,
+      seconds: SESSION_LENGTH,
+      sessionCount: isBreak ? sessionCount : sessionCount - 1
+    });
+  };
+
   stopSessionEndingSound = () => {
     this.setState({ sessionSoundStatus: Sound.status.STOPPED });
   };
@@ -123,7 +135,7 @@ class Pomodoro extends Component {
             : `Completed  ${sessionCount} sessions`}
         </h4>
 
-        <Sound
+        {/* <Sound
           url={gongSound}
           playStatus={sessionSoundStatus}
           onFinishedPlaying={this.stopSessionEndingSound}
@@ -132,10 +144,11 @@ class Pomodoro extends Component {
           url={bongSound}
           playStatus={breakSoundStatus}
           onFinishedPlaying={this.stopBreakEndingSound}
-        />
+        /> */}
         <Button onClick={this.handleStartButton} disabled={timerIsRunning}>
           start
         </Button>
+        <Button onClick={this.handleStopButton}>stop</Button>
       </TimerBox>
     );
   }
