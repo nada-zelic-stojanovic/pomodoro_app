@@ -148,7 +148,8 @@ class Pomodoro extends Component {
     this.setState({
       sessionLength: sessionLength,
       shortBreakLength: shortBreakLength,
-      longBreakLength: longBreakLength, 
+      longBreakLength: longBreakLength,
+      seconds: sessionLength,
       settingsOn: false
     });
   };
@@ -188,7 +189,7 @@ class Pomodoro extends Component {
       <TimerBox>
         <h2>{isBreak && sessionCount % 4 === 0 && 'LONG'}</h2>
         <h2>{isBreak ? 'BREAK' : 'SESSION'}</h2>
-        <RemainingTime remainingSeconds={!timerIsRunning && !isBreak ? sessionLength : seconds} />
+        <RemainingTime remainingSeconds={seconds} />
         <h4>
           {(timerIsRunning || isPaused) && !isBreak
             ? `Current session: ${sessionCount}`
@@ -213,7 +214,7 @@ class Pomodoro extends Component {
           {isPaused ? 'resume' : 'pause'}
         </Button>
         <br />
-        <button onClick={this.showSettings}>Settings</button>
+        <button onClick={this.showSettings} disabled={timerIsRunning}>Settings</button>
       </TimerBox>
     );
   }
