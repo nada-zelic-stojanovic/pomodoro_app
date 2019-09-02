@@ -9,8 +9,6 @@ class Settings extends Component {
       longBreakLength: this.props.longBreakLength
     };
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleChange = event => {
