@@ -6,6 +6,8 @@ import gongSound from './../../assets/gong.mp3';
 import bongSound from './../../assets/bong.mp3';
 import Settings from './../../components/Settings';
 
+import './Pomodoro.css';
+
 const TimerBox = styled.div`
   position: absolute;
   top: 40%;
@@ -14,11 +16,42 @@ const TimerBox = styled.div`
   text-align: center;
 `;
 
-const Button = styled.button`
-  width: 45px;
-  height: 45px;
+const ControlButton = styled.button`
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   border-style: none;
+  background-color: rgb(204, 0, 0);
+  font-weight: 900;
+  font-family: 'Lato', sans-serif;
+  color: rgb(255, 255, 204);
+  box-shadow: 2px 2px rgb(153, 0, 0);
+  margin: 3px;
+  text-align: center;
+
+  :hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,.5);
+  }
+`;
+
+const Button = styled.button`
+  background-color: rgb(0, 51, 0);
+  border-style: none;
+  margin: 20px 5px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  height: 50px;
+  width: 110px;
+  border-style: none;
+  border-radius: 10px;
+  color: rgb(255, 255, 204);
+  text-transform: uppercase;
+
+  :hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,.5);
+  }
 `;
 
 const SESSION_LENGTH = 25;
@@ -39,7 +72,8 @@ class Pomodoro extends Component {
       sessionLength: SESSION_LENGTH,
       shortBreakLength: SHORT_BREAK_LENGTH,
       longBreakLength: LONG_BREAK_LENGTH,
-      settingsOn: false
+      settingsOn: false,
+      sessionLogOn: false
     };
   }
 
@@ -100,6 +134,7 @@ class Pomodoro extends Component {
 
   handleStartButton = () => {
     this.startTimer(false);
+    
   };
 
   handleStopButton = () => {
@@ -144,6 +179,10 @@ class Pomodoro extends Component {
     this.setState({ settingsOn: true });
   };
 
+  showSessionLog = () => {
+    this.setState({ sessionLogOn: true });
+  };
+
   handleSettingsApply = (sessionLength, shortBreakLength, longBreakLength) => {
     this.setState({
       sessionLength: sessionLength,
@@ -160,6 +199,10 @@ class Pomodoro extends Component {
     });
   };
 
+  
+
+  
+
   render() {
     const {
       seconds,
@@ -172,11 +215,13 @@ class Pomodoro extends Component {
       sessionLength,
       shortBreakLength,
       longBreakLength,
-      settingsOn
+      settingsOn, sessionLogOn
     } = this.state;
 
-    return settingsOn ? (
-      <TimerBox>
+    let currentPage;
+    if(settingsOn && !sessionLogOn) {
+      currentPage = (
+        <TimerBox>
         <Settings
           sessionLength={sessionLength}
           shortBreakLength={shortBreakLength}
@@ -185,10 +230,18 @@ class Pomodoro extends Component {
           cancelSettings={this.handleCancel}
         />
       </TimerBox>
-    ) : (
-      <TimerBox>
-        <h2>{isBreak && sessionCount % 4 === 0 && 'LONG'}</h2>
-        <h2>{isBreak ? 'BREAK' : 'SESSION'}</h2>
+      )
+    } else if (sessionLogOn && !settingsOn) {
+      currentPage = (
+        <TimerBox>
+          
+        </TimerBox>
+      )
+    } else {
+      currentPage = (
+        <TimerBox>
+        <h1>{isBreak && sessionCount % 4 === 0 && 'LONG'}</h1>
+        <h1>{isBreak ? 'BREAK' : 'SESSION'}</h1>
         <RemainingTime remainingSeconds={seconds} />
         <h4>
           {(timerIsRunning || isPaused) && !isBreak
@@ -206,17 +259,27 @@ class Pomodoro extends Component {
           playStatus={breakSoundStatus}
           onFinishedPlaying={this.stopBreakEndingSound}
         /> */}
-        <Button onClick={this.handleStartButton} disabled={timerIsRunning}>
-          start
-        </Button>
-        <Button onClick={this.handleStopButton}>stop</Button>
-        <Button onClick={isPaused ? this.unpause : this.pause}>
-          {isPaused ? 'resume' : 'pause'}
-        </Button>
+        <ControlButton onClick={this.handleStartButton} disabled={timerIsRunning}>
+          START
+        </ControlButton>
+        <ControlButton onClick={this.handleStopButton}>STOP</ControlButton>
+        <ControlButton onClick={isPaused ? this.unpause : this.pause}>
+          {isPaused ? 'RESUME' : 'PAUSE'}
+        </ControlButton>
         <br />
-        <button onClick={this.showSettings} disabled={timerIsRunning}>Settings</button>
+        <Button onClick={this.showSettings} disabled={timerIsRunning} style={{float: 'left'}}>
+          Settings
+        </Button>
+        <Button onClick={this.showSessionLog} style={{float: 'right'}}>Session Log</Button>
       </TimerBox>
-    );
+      )
+    }
+
+    return (
+      <div>
+        {currentPage}
+      </div>
+    )
   }
 }
 
