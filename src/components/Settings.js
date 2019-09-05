@@ -1,4 +1,35 @@
 import React, { Component } from 'react';
+import styled from 'styled-components';
+
+const Button = styled.button`
+  background-color: rgb(0, 51, 0);
+  border-style: none;
+  margin: 20px 5px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  height: 50px;
+  width: 110px;
+  border-style: none;
+  border-radius: 10px;
+  color: rgb(255, 255, 204);
+  text-transform: uppercase;
+
+  :hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,.5);
+  }
+
+  :active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+`;
+
+const Select = styled.div`
+  font-size: 1.8em;
+  margin: 15px 5px;
+  line-height: 1.6;
+`;
 
 class Settings extends Component {
   constructor(props) {
@@ -27,25 +58,30 @@ class Settings extends Component {
   };
 
   render() {
+
     let shortBreak = [];
     for (let i = 1; i < 11; i++) {
       shortBreak.push(
-        <option value={i} selected={i === this.state.shortBreakLength}>
+        <option value={i} key={'sb' + i}>
           {i}
         </option>
       );
     }
 
+    let session = [];
     let longBreak = [];
     for (let i = 10; i < 31; i++) {
       longBreak.push(
-        <option value={i} selected={i === this.state.longBreakLength}>
+        <option value={i} key={'lb' + i}>
           {i}
         </option>
       );
+      session.push(<option value={i} key={'sl' + i}>
+      {i}
+    </option>)
     }
     return (
-      <div>
+      <Select>
         <form onSubmit={this.handleSubmit}>
           <label>
             Session length:
@@ -53,12 +89,10 @@ class Settings extends Component {
               onChange={this.handleChange}
               name="sessionLength"
               value={this.state.sessionLength}
+              className="selectSettings"
+              dir='rtl'
             >
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
-              <option value="30">30</option>
+              {session}
             </select>
           </label>
           <br />
@@ -68,6 +102,8 @@ class Settings extends Component {
               onChange={this.handleChange}
               name="shortBreakLength"
               value={this.state.shortBreakLength}
+              className="selectSettings"
+              dir='rtl'
             >
               {shortBreak}
             </select>
@@ -79,15 +115,17 @@ class Settings extends Component {
               onChange={this.handleChange}
               name="longBreakLength"
               value={this.state.longBreakLength}
+              className="selectSettings"
+              dir='rtl'
             >
               {longBreak}
             </select>
           </label>
           <br />
-          <input type="submit" value="Apply" />
-          <button onClick={this.props.cancelSettings}>Cancel</button>
+          <Button type="submit" value="Apply">Apply</Button>
+          <Button onClick={this.props.cancelSettings} style={{backgroundColor: 'rgb(204, 0, 0)'}}>Cancel</Button>
         </form>
-      </div>
+      </Select>
     );
   }
 }
