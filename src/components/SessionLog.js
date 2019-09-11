@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { db } from './../firebaseStuff';
-import styled from 'styled-components';
-
-const SessionList = styled.ul``;
+import { SessionBox, SessionList, Button } from '../styledComponents';
 
 class SessionLog extends Component {
   constructor(props) {
@@ -36,26 +34,35 @@ class SessionLog extends Component {
   };
 
   render() {
-    const {dayLog, dates} = this.state;
+    const { dayLog, dates } = this.state;
 
     return (
-      <div>
-        <button onClick={this.props.returnToTimer}>Return</button>
-        <ul>
+      <SessionBox>
+        <Button onClick={this.props.returnToTimer} styles={{
+          position: 'absolute', 
+          top: '40%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center'}}>Return
+        </Button>
+        <SessionList>
           {dates.map((date, index) => (
             <li key={index}>
-              {date} || 
-              Total sessions:{' '}
-              {dayLog.map(entry => entry.date === date).length} ||
-              Total time:{' '}
+              {date} {'  '}
+              <span style={{ color: 'rgb(204, 0, 0)' }}>||</span> {'  '}
+              Total sessions: {'  '}
+              {dayLog.map(entry => entry.date === date).length}{' '}
+              <span style={{ color: 'rgb(204, 0, 0)' }}>||</span>{'  '}
+              Total time:{'  '}
               {dayLog
                 .filter(entry => entry.date === date)
                 .map(entry => entry.length)
-                .reduce((acc, cur) => acc + cur, 0)}{' minutes'}
+                .reduce((acc, cur) => acc + cur, 0)}
+              {' minutes'}
             </li>
           ))}
-        </ul> 
-      </div>
+        </SessionList>
+      </SessionBox>
     );
   }
 }
