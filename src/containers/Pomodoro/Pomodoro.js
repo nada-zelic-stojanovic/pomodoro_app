@@ -5,8 +5,10 @@ import Sound from 'react-sound';
 import gongSound from './../../assets/gong.mp3';
 import bongSound from './../../assets/bong.mp3';
 import Settings from './../../components/Settings';
-
+import SessionLog from './../../components/SessionLog';
 import './Pomodoro.css';
+import {db} from './../../firebaseStuff';
+
 
 const TimerBox = styled.div`
   position: absolute;
@@ -14,6 +16,12 @@ const TimerBox = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+`;
+
+const SessionBox = styled.div`
+  position: absolute;
+  top: 5%;
+  left: 5%
 `;
 
 const ControlButton = styled.button`
@@ -33,6 +41,11 @@ const ControlButton = styled.button`
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0,0,0,.5);
   }
+
+  :active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
 `;
 
 const Button = styled.button`
@@ -52,6 +65,11 @@ const Button = styled.button`
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0,0,0,.5);
   }
+
+  :active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
 `;
 
 const SESSION_LENGTH = 25;
@@ -128,13 +146,13 @@ class Pomodoro extends Component {
 
       if (!isBreak) {
         this.startTimer(!isBreak);
+        this.saveSessionData(this.state.sessionLength, this.state.sessionCount);
       }
     }, seconds * 1000);
   };
 
   handleStartButton = () => {
     this.startTimer(false);
-    
   };
 
   handleStopButton = () => {
@@ -199,9 +217,18 @@ class Pomodoro extends Component {
     });
   };
 
-  
+  saveSessionData = (sessionLength, sessionCount) => {
+    const today = new Date().toDateString();
+    db.collection('sessions').add({
+      date: today,
+      count: sessionCount,
+      length: sessionLength
+    });
+  };
 
-  
+  handleReturnFromSessionLog = () => {
+    this.setState({sessionLogOn: false});
+  }
 
   render() {
     const {
@@ -233,9 +260,9 @@ class Pomodoro extends Component {
       )
     } else if (sessionLogOn && !settingsOn) {
       currentPage = (
-        <TimerBox>
-          
-        </TimerBox>
+        <SessionBox>
+          <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
+        </SessionBox>
       )
     } else {
       currentPage = (
@@ -262,8 +289,8 @@ class Pomodoro extends Component {
         <ControlButton onClick={this.handleStartButton} disabled={timerIsRunning}>
           START
         </ControlButton>
-        <ControlButton onClick={this.handleStopButton}>STOP</ControlButton>
-        <ControlButton onClick={isPaused ? this.unpause : this.pause}>
+        <ControlButton onClick={this.handleStopButton} disabled={!timerIsRunning && !isPaused}>STOP</ControlButton>
+        <ControlButton onClick={isPaused ? this.unpause : this.pause} disabled={!timerIsRunning && !isPaused}>
           {isPaused ? 'RESUME' : 'PAUSE'}
         </ControlButton>
         <br />
