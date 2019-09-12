@@ -1,5 +1,5 @@
 import React from 'react';
-import {Time, ClockBox} from './../styledComponents';
+import {Time, ClockBox} from '../uiComponents';
 
 const RemainingTime = ({ remainingSeconds }) => {
   const minutes = Math.floor(remainingSeconds / 60);

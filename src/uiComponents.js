@@ -24,13 +24,13 @@ export const ControlButton = styled.button`
 
   :hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,.5);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   }
 
   :active {
     transform: translateY(-1px);
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
-}
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 export const Button = styled.button`
@@ -48,13 +48,13 @@ export const Button = styled.button`
 
   :hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,.5);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   }
 
   :active {
     transform: translateY(-1px);
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
-}
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 //RemainingTime
@@ -65,7 +65,7 @@ export const ClockBox = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 50px;
-  box-shadow: 2px 2px rgb(0, 51, 0)
+  box-shadow: 2px 2px rgb(0, 51, 0);
 `;
 
 //SessionLog
@@ -77,3 +77,5 @@ export const SessionBox = styled.div`
 export const SessionList = styled.ul`
   list-style-type: circle;
 `;
+
+

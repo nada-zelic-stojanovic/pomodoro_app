@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import RemainingTime from './../../components/RemainingTime';
-import {TimerBox, SessionBox, ControlButton, Button} from './../../styledComponents';
+import RemainingTime from '../../components/RemainingTime';
+import {TimerBox, ControlButton, Button} from '../../uiComponents';
 import Sound from 'react-sound';
-import gongSound from './../../assets/gong.mp3';
-import bongSound from './../../assets/bong.mp3';
-import Settings from './../../components/Settings';
-import SessionLog from './../../components/SessionLog';
+import gongSound from '../../assets/gong.mp3';
+import bongSound from '../../assets/bong.mp3';
+import Settings from '../../components/Settings';
+import SessionLog from '../../components/SessionLog';
 import './Pomodoro.css';
-import {db} from './../../firebaseStuff';
+import {saveSessionData} from '../../firebase';
 
 
-const SESSION_LENGTH = 25;
+const SESSION_LENGTH = 5;
 const SHORT_BREAK_LENGTH = 5;
 const LONG_BREAK_LENGTH = 15;
 
@@ -61,6 +61,7 @@ class Pomodoro extends Component {
     });
 
     this.startIntervalAndTimeout(seconds, isBreak);
+    
   };
 
   startIntervalAndTimeout = (seconds, isBreak) => {
@@ -68,6 +69,7 @@ class Pomodoro extends Component {
       const { seconds } = this.state;
       this.setState({ seconds: seconds - 1 });
     }, 1000);
+    const {sessionLength} = this.state;
 
     this.timeout = setTimeout(() => {
       clearInterval(this.interval);
@@ -84,7 +86,7 @@ class Pomodoro extends Component {
 
       if (!isBreak) {
         this.startTimer(!isBreak);
-        this.saveSessionData(this.state.sessionLength, this.state.sessionCount);
+        saveSessionData(sessionLength);
       }
     }, seconds * 1000);
   };
@@ -101,7 +103,7 @@ class Pomodoro extends Component {
       timerIsRunning: false,
       isBreak: false,
       seconds: sessionLength,
-      sessionCount: isBreak ? sessionCount : sessionCount - 1
+      sessionCount: isBreak ? sessionCount : sessionCount - 1,
     });
   };
 
@@ -155,20 +157,13 @@ class Pomodoro extends Component {
     });
   };
 
-  saveSessionData = (sessionLength, sessionCount) => {
-    const today = new Date().toDateString();
-    db.collection('sessions').add({
-      date: today,
-      count: sessionCount,
-      length: sessionLength
-    });
-  };
 
   handleReturnFromSessionLog = () => {
     this.setState({sessionLogOn: false});
   }
 
   render() {
+    
     const {
       seconds,
       timerIsRunning,

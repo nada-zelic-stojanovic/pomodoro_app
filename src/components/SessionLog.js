@@ -1,64 +1,51 @@
 import React, { Component } from 'react';
-import { db } from './../firebaseStuff';
-import { SessionBox, SessionList, Button } from '../styledComponents';
+import { db } from '../firebase';
+import { SessionBox, SessionList, Button } from '../uiComponents';
 
 class SessionLog extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      dayLog: [],
-      dates: []
-    };
-  }
+  state = {
+    logs: []
+  };
 
   componentDidMount = () => {
-    const { dayLog, dates } = this.state;
+    const { logs } = this.state;
     db.collection('sessions')
       .get()
       .then(snapshot => {
         snapshot.docs.forEach(doc => {
           const log = {
             id: doc.id,
-            count: doc.data().count,
             date: doc.data().date,
-            length: parseInt(doc.data().length)
+            totalSessionCount: doc.data().totalSessionCount,
+            totalTime: parseInt(doc.data().totalTime)
           };
-          dayLog.push(log);
-          if (!dates.includes(log.date)) {
-            dates.push(log.date);
-          }
-          this.setState({ dayLog: dayLog });
+          logs.push(log);
+          this.setState({ logs: logs });
         });
       })
       .catch(e => console.log(e));
   };
 
   render() {
-    const { dayLog, dates } = this.state;
+    const { logs } = this.state;
 
     return (
       <SessionBox>
-        <Button onClick={this.props.returnToTimer} styles={{
-          position: 'absolute', 
-          top: '40%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          textAlign: 'center'}}>Return
-        </Button>
+        <Button onClick={this.props.returnToTimer}>Return</Button>
         <SessionList>
-          {dates.map((date, index) => (
-            <li key={index}>
-              {date} {'  '}
-              <span style={{ color: 'rgb(204, 0, 0)' }}>||</span> {'  '}
+          {logs.map(log => (
+            <li key={log.id}>
+              {log.date}
+              {'  '}
+              <span className='redText'>||</span>
+              {'  '}
               Total sessions: {'  '}
-              {dayLog.map(entry => entry.date === date).length}{' '}
-              <span style={{ color: 'rgb(204, 0, 0)' }}>||</span>{'  '}
+              {log.totalSessionCount}
+              {'  '}
+              <span className='redText'>||</span>
+              {'  '}
               Total time:{'  '}
-              {dayLog
-                .filter(entry => entry.date === date)
-                .map(entry => entry.length)
-                .reduce((acc, cur) => acc + cur, 0)}
-              {' minutes'}
+              {log.totalTime}
             </li>
           ))}
         </SessionList>
