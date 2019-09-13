@@ -87,8 +87,21 @@ export const CancelButton = styled(Button)`
   background-color: rgb(204, 0, 0);
 `;
 
-export const Select = styled.div`
+export const SettingsBox = styled.div`
   font-size: 1.8em;
   margin: 15px 5px;
   line-height: 1.6;
+`;
+
+export const Select = styled.select`
+  padding: 2px 5px 2px 12px;
+  width: 70px;
+  height: 40px;
+  border-radius: 10px;
+  border-color: rgb(0, 51, 0);
+  border-style: solid;
+  border-width: 2.5px;
+  font-size: 18px;
+  float: right;
+  margin-top: 5px;
 `;

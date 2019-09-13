@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import {Button, CancelButton, Select} from '../uiComponents';
+import {Button, CancelButton, SettingsBox, Select} from '../uiComponents';
 
 class Settings extends Component {
   constructor(props) {
@@ -52,51 +52,48 @@ class Settings extends Component {
     </option>)
     }
     return (
-      <Select>
+      <SettingsBox>
         <form onSubmit={this.handleSubmit}>
           <label>
             Session length:
-            <select
+            <Select
               onChange={this.handleChange}
               name="sessionLength"
               value={this.state.sessionLength}
-              className="selectSettings"
               dir='rtl'
             >
               {session}
-            </select>
+            </Select>
           </label>
           <br />
           <label>
             Short break length:
-            <select
+            <Select
               onChange={this.handleChange}
               name="shortBreakLength"
               value={this.state.shortBreakLength}
-              className="selectSettings"
               dir='rtl'
             >
               {shortBreak}
-            </select>
+            </Select>
           </label>
           <br />
           <label>
             Long break length:
-            <select
+            <Select
               onChange={this.handleChange}
               name="longBreakLength"
               value={this.state.longBreakLength}
-              className="selectSettings"
               dir='rtl'
             >
               {longBreak}
-            </select>
+            </Select>
           </label>
           <br />
           <Button type="submit">Apply</Button>
           <CancelButton onClick={this.props.cancelSettings}>Cancel</CancelButton>
         </form>
-      </Select>
+      </SettingsBox>
     );
   }
 }
