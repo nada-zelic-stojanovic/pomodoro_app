@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import RemainingTime from '../../components/RemainingTime';
-import {TimerBox, ControlButton, Button} from '../../uiComponents';
+import { TimerBox, ControlButton, Button } from '../../uiComponents';
 import Sound from 'react-sound';
 import gongSound from '../../assets/gong.mp3';
 import bongSound from '../../assets/bong.mp3';
 import Settings from '../../components/Settings';
 import SessionLog from '../../components/SessionLog';
 import './Pomodoro.css';
-import {saveSessionData} from '../../firebase';
-
+import { saveSessionData } from '../../firebase';
+import Timer from '../../components/Timer';
 
 const SESSION_LENGTH = 5;
 const SHORT_BREAK_LENGTH = 5;
@@ -61,7 +61,6 @@ class Pomodoro extends Component {
     });
 
     this.startIntervalAndTimeout(seconds, isBreak);
-    
   };
 
   startIntervalAndTimeout = (seconds, isBreak) => {
@@ -69,7 +68,7 @@ class Pomodoro extends Component {
       const { seconds } = this.state;
       this.setState({ seconds: seconds - 1 });
     }, 1000);
-    const {sessionLength} = this.state;
+    const { sessionLength } = this.state;
 
     this.timeout = setTimeout(() => {
       clearInterval(this.interval);
@@ -103,7 +102,7 @@ class Pomodoro extends Component {
       timerIsRunning: false,
       isBreak: false,
       seconds: sessionLength,
-      sessionCount: isBreak ? sessionCount : sessionCount - 1,
+      sessionCount: isBreak ? sessionCount : sessionCount - 1
     });
   };
 
@@ -157,13 +156,11 @@ class Pomodoro extends Component {
     });
   };
 
-
   handleReturnFromSessionLog = () => {
-    this.setState({sessionLogOn: false});
-  }
+    this.setState({ sessionLogOn: false });
+  };
 
   render() {
-    
     const {
       seconds,
       timerIsRunning,
@@ -175,69 +172,58 @@ class Pomodoro extends Component {
       sessionLength,
       shortBreakLength,
       longBreakLength,
-      settingsOn, sessionLogOn
+      settingsOn,
+      sessionLogOn
     } = this.state;
 
     let currentPage;
-    if(settingsOn && !sessionLogOn) {
+    if (settingsOn && !sessionLogOn) {
       currentPage = (
         <TimerBox>
-        <Settings
-          sessionLength={sessionLength}
-          shortBreakLength={shortBreakLength}
-          longBreakLength={longBreakLength}
-          applySettings={this.handleSettingsApply}
-          cancelSettings={this.handleCancel}
-        />
-      </TimerBox>
-      )
+          <Settings
+            sessionLength={sessionLength}
+            shortBreakLength={shortBreakLength}
+            longBreakLength={longBreakLength}
+            applySettings={this.handleSettingsApply}
+            cancelSettings={this.handleCancel}
+          />
+        </TimerBox>
+      );
     } else if (sessionLogOn && !settingsOn) {
       currentPage = (
-          <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
-      )
+        <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
+      );
     } else {
       currentPage = (
-        <TimerBox>
-        <h1>{isBreak && sessionCount % 4 === 0 && 'LONG'}</h1>
-        <h1>{isBreak ? 'BREAK' : 'SESSION'}</h1>
-        <RemainingTime remainingSeconds={seconds} />
-        <h4>
-          {(timerIsRunning || isPaused) && !isBreak
-            ? `Current session: ${sessionCount}`
-            : `Completed  ${sessionCount} sessions`}
-        </h4>
-
-        {/* <Sound
-          url={gongSound}
-          playStatus={sessionSoundStatus}
-          onFinishedPlaying={this.stopSessionEndingSound}
-        />
-        <Sound
-          url={bongSound}
-          playStatus={breakSoundStatus}
-          onFinishedPlaying={this.stopBreakEndingSound}
-        /> */}
-        <ControlButton onClick={this.handleStartButton} disabled={timerIsRunning}>
-          START
-        </ControlButton>
-        <ControlButton onClick={this.handleStopButton} disabled={!timerIsRunning && !isPaused}>STOP</ControlButton>
-        <ControlButton onClick={isPaused ? this.unpause : this.pause} disabled={!timerIsRunning && !isPaused}>
-          {isPaused ? 'RESUME' : 'PAUSE'}
-        </ControlButton>
-        <br />
-        <Button onClick={this.showSettings} disabled={timerIsRunning} style={{float: 'left'}}>
-          Settings
-        </Button>
-        <Button onClick={this.showSessionLog} style={{float: 'right'}}>Session Log</Button>
-      </TimerBox>
-      )
+        <div>
+          <Timer
+            isBreak={isBreak}
+            sessionCount={sessionCount}
+            seconds={seconds}
+            isPaused={isPaused}
+            timerIsRunning={timerIsRunning}
+            handleStartButton={this.handleStartButton}
+            handleStopButton={this.handleStopButton}
+            pause={this.pause}
+            unpause={this.unpause}
+            showSettings={this.showSettings}
+            showSessionLog={this.showSessionLog}
+          />
+          <Sound
+            url={gongSound}
+            playStatus={sessionSoundStatus}
+            onFinishedPlaying={this.stopSessionEndingSound}
+          />
+          <Sound
+            url={bongSound}
+            playStatus={breakSoundStatus}
+            onFinishedPlaying={this.stopBreakEndingSound}
+          />
+        </div>
+      );
     }
 
-    return (
-      <div>
-        {currentPage}
-      </div>
-    )
+    return <div>{currentPage}</div>;
   }
 }
 
