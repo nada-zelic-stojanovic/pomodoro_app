@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import RemainingTime from '../../components/RemainingTime';
-import { TimerBox, ControlButton, Button } from '../../uiComponents';
 import Sound from 'react-sound';
 import gongSound from '../../assets/gong.mp3';
 import bongSound from '../../assets/bong.mp3';
@@ -28,8 +26,7 @@ class Pomodoro extends Component {
       sessionLength: SESSION_LENGTH,
       shortBreakLength: SHORT_BREAK_LENGTH,
       longBreakLength: LONG_BREAK_LENGTH,
-      settingsOn: false,
-      sessionLogOn: false
+      currentPage: 'timer'
     };
   }
 
@@ -133,11 +130,11 @@ class Pomodoro extends Component {
   };
 
   showSettings = () => {
-    this.setState({ settingsOn: true });
+    this.setState({ currentPage: 'settings' });
   };
 
   showSessionLog = () => {
-    this.setState({ sessionLogOn: true });
+    this.setState({  currentPage: 'sessionLog' });
   };
 
   handleSettingsApply = (sessionLength, shortBreakLength, longBreakLength) => {
@@ -152,12 +149,12 @@ class Pomodoro extends Component {
 
   handleCancel = () => {
     this.setState({
-      settingsOn: false
+      currentPage: 'timer'
     });
   };
 
   handleReturnFromSessionLog = () => {
-    this.setState({ sessionLogOn: false });
+    this.setState({  currentPage: 'timer' });
   };
 
   render() {
@@ -172,58 +169,52 @@ class Pomodoro extends Component {
       sessionLength,
       shortBreakLength,
       longBreakLength,
-      settingsOn,
-      sessionLogOn
+      currentPage
     } = this.state;
 
-    let currentPage;
-    if (settingsOn && !sessionLogOn) {
-      currentPage = (
-        <TimerBox>
+    return (
+      <div>
+        {currentPage === 'timer' && (
+          <div>
+            <Timer
+              isBreak={isBreak}
+              sessionCount={sessionCount}
+              seconds={seconds}
+              isPaused={isPaused}
+              timerIsRunning={timerIsRunning}
+              handleStartButton={this.handleStartButton}
+              handleStopButton={this.handleStopButton}
+              pause={this.pause}
+              unpause={this.unpause}
+              showSettings={this.showSettings}
+              showSessionLog={this.showSessionLog}
+            />
+            <Sound
+              url={gongSound}
+              playStatus={sessionSoundStatus}
+              onFinishedPlaying={this.stopSessionEndingSound}
+            />
+            <Sound
+              url={bongSound}
+              playStatus={breakSoundStatus}
+              onFinishedPlaying={this.stopBreakEndingSound}
+            />
+          </div>
+        )}
+        {currentPage === 'settings' && (
           <Settings
-            sessionLength={sessionLength}
-            shortBreakLength={shortBreakLength}
-            longBreakLength={longBreakLength}
-            applySettings={this.handleSettingsApply}
-            cancelSettings={this.handleCancel}
-          />
-        </TimerBox>
-      );
-    } else if (sessionLogOn && !settingsOn) {
-      currentPage = (
-        <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
-      );
-    } else {
-      currentPage = (
-        <div>
-          <Timer
-            isBreak={isBreak}
-            sessionCount={sessionCount}
-            seconds={seconds}
-            isPaused={isPaused}
-            timerIsRunning={timerIsRunning}
-            handleStartButton={this.handleStartButton}
-            handleStopButton={this.handleStopButton}
-            pause={this.pause}
-            unpause={this.unpause}
-            showSettings={this.showSettings}
-            showSessionLog={this.showSessionLog}
-          />
-          <Sound
-            url={gongSound}
-            playStatus={sessionSoundStatus}
-            onFinishedPlaying={this.stopSessionEndingSound}
-          />
-          <Sound
-            url={bongSound}
-            playStatus={breakSoundStatus}
-            onFinishedPlaying={this.stopBreakEndingSound}
-          />
-        </div>
-      );
-    }
-
-    return <div>{currentPage}</div>;
+          sessionLength={sessionLength}
+          shortBreakLength={shortBreakLength}
+          longBreakLength={longBreakLength}
+          applySettings={this.handleSettingsApply}
+          cancelSettings={this.handleCancel}
+        />
+        )}
+        {currentPage === 'sessionLog' && (
+          <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
+        )}
+      </div>
+    );
   }
 }
 
