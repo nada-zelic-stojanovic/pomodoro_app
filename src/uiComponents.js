@@ -78,4 +78,13 @@ export const SessionList = styled.ul`
   list-style-type: circle;
 `;
 
+//Settings
+export const CancelButton = styled(Button)`
+  background-color: rgb(204, 0, 0);
+`;
 
+export const Select = styled.div`
+  font-size: 1.8em;
+  margin: 15px 5px;
+  line-height: 1.6;
+`;
