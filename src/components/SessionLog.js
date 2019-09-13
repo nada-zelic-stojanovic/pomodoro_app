@@ -8,22 +8,17 @@ class SessionLog extends Component {
   };
 
   componentDidMount = () => {
-    const { logs } = this.state;
     db.collection('sessions')
       .get()
       .then(snapshot => {
-        snapshot.docs.forEach(doc => {
-          const log = {
-            id: doc.id,
-            date: doc.data().date,
-            totalSessionCount: doc.data().totalSessionCount,
-            totalTime: parseInt(doc.data().totalTime)
-          };
-          logs.push(log);
-          this.setState({ logs: logs });
-        });
-      })
-      .catch(e => console.log(e));
+        const logs = snapshot.docs.map(doc => ({
+          id: doc.id,
+          date: doc.data().date,
+          totalSessionCount: doc.data().totalSessionCount,
+          totalTime: parseInt(doc.data().totalTime)
+        }));
+        this.setState({logs: logs});
+      });
   };
 
   render() {
@@ -37,12 +32,12 @@ class SessionLog extends Component {
             <li key={log.id}>
               {log.date}
               {'  '}
-              <span className='redText'>||</span>
+              <span className="redText">||</span>
               {'  '}
               Total sessions: {'  '}
               {log.totalSessionCount}
               {'  '}
-              <span className='redText'>||</span>
+              <span className="redText">||</span>
               {'  '}
               Total time:{'  '}
               {log.totalTime}
