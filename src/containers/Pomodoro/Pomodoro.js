@@ -143,7 +143,7 @@ class Pomodoro extends Component {
       shortBreakLength: shortBreakLength,
       longBreakLength: longBreakLength,
       seconds: sessionLength,
-      settingsOn: false
+      currentPage: 'timer'
     });
   };
 
