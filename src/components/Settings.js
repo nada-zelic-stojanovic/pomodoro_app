@@ -122,7 +122,7 @@ class Settings extends Component {
             </select>
           </label>
           <br />
-          <Button type="submit" value="Apply">Apply</Button>
+          <Button type="submit">Apply</Button>
           <Button onClick={this.props.cancelSettings} style={{backgroundColor: 'rgb(204, 0, 0)'}}>Cancel</Button>
         </form>
       </Select>
