@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
 
+import {
+  Button,
+  CancelButton,
+  SettingsBox,
+  Select,
+  TimerBox
+} from '../uiComponents';
+
 class Settings extends Component {
   constructor(props) {
     super(props);
@@ -8,7 +16,6 @@ class Settings extends Component {
       sessionLength: this.props.sessionLength,
       longBreakLength: this.props.longBreakLength
     };
-
   }
 
   handleChange = event => {
@@ -22,7 +29,7 @@ class Settings extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    const {sessionLength, shortBreakLength, longBreakLength} = this.state;
+    const { sessionLength, shortBreakLength, longBreakLength } = this.state;
     this.props.applySettings(sessionLength, shortBreakLength, longBreakLength);
   };
 
@@ -30,64 +37,73 @@ class Settings extends Component {
     let shortBreak = [];
     for (let i = 1; i < 11; i++) {
       shortBreak.push(
-        <option value={i} selected={i === this.state.shortBreakLength}>
+        <option value={i} key={'sb' + i}>
           {i}
         </option>
       );
     }
 
+    let session = [];
     let longBreak = [];
     for (let i = 10; i < 31; i++) {
       longBreak.push(
-        <option value={i} selected={i === this.state.longBreakLength}>
+        <option value={i} key={'lb' + i}>
+          {i}
+        </option>
+      );
+      session.push(
+        <option value={i} key={'sl' + i}>
           {i}
         </option>
       );
     }
     return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Session length:
-            <select
-              onChange={this.handleChange}
-              name="sessionLength"
-              value={this.state.sessionLength}
-            >
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="25">25</option>
-              <option value="30">30</option>
-            </select>
-          </label>
-          <br />
-          <label>
-            Short break length:
-            <select
-              onChange={this.handleChange}
-              name="shortBreakLength"
-              value={this.state.shortBreakLength}
-            >
-              {shortBreak}
-            </select>
-          </label>
-          <br />
-          <label>
-            Long break length:
-            <select
-              onChange={this.handleChange}
-              name="longBreakLength"
-              value={this.state.longBreakLength}
-            >
-              {longBreak}
-            </select>
-          </label>
-          <br />
-          <input type="submit" value="Apply" />
-          <button onClick={this.props.cancelSettings}>Cancel</button>
-        </form>
-      </div>
+      <TimerBox>
+        <SettingsBox>
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Session length:
+              <Select
+                onChange={this.handleChange}
+                name="sessionLength"
+                value={this.state.sessionLength}
+                dir="rtl"
+              >
+                {session}
+              </Select>
+            </label>
+            <br />
+            <label>
+              Short break length:
+              <Select
+                onChange={this.handleChange}
+                name="shortBreakLength"
+                value={this.state.shortBreakLength}
+                dir="rtl"
+              >
+                {shortBreak}
+              </Select>
+            </label>
+            <br />
+            <label>
+              Long break length:
+              <Select
+                onChange={this.handleChange}
+                name="longBreakLength"
+                value={this.state.longBreakLength}
+                dir="rtl"
+              >
+                {longBreak}
+              </Select>
+            </label>
+            <br />
+            <Button type="submit">Apply</Button>
+            <CancelButton onClick={this.props.cancelSettings}>
+              Cancel
+            </CancelButton>
+          </form>
+        </SettingsBox>
+      </TimerBox>
     );
   }
 }

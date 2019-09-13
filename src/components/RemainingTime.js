@@ -1,20 +1,19 @@
 import React from 'react';
-import styled from 'styled-components';
+import {Time, ClockBox} from '../uiComponents';
 
 const RemainingTime = ({ remainingSeconds }) => {
   const minutes = Math.floor(remainingSeconds / 60);
   const seconds = remainingSeconds % 60;
   return (
     <div>
-      <Time>
-        {minutes} : {seconds}
-      </Time>
+      <ClockBox>
+        <Time>
+          {minutes} : {seconds}
+        </Time>
+      </ClockBox>
     </div>
   );
 };
 
-const Time = styled.div`
-  font-size: 2rem;
-`;
 
 export default RemainingTime;

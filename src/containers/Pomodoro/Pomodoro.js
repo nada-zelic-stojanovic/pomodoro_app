@@ -1,27 +1,14 @@
 import React, { Component } from 'react';
-import RemainingTime from './../../components/RemainingTime';
-import styled from 'styled-components';
 import Sound from 'react-sound';
-import gongSound from './../../assets/gong.mp3';
-import bongSound from './../../assets/bong.mp3';
-import Settings from './../../components/Settings';
+import gongSound from '../../assets/gong.mp3';
+import bongSound from '../../assets/bong.mp3';
+import Settings from '../../components/Settings';
+import SessionLog from '../../components/SessionLog';
+import './Pomodoro.css';
+import { saveSessionData } from '../../firebase';
+import Timer from '../../components/Timer';
 
-const TimerBox = styled.div`
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-`;
-
-const Button = styled.button`
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border-style: none;
-`;
-
-const SESSION_LENGTH = 25;
+const SESSION_LENGTH = 5;
 const SHORT_BREAK_LENGTH = 5;
 const LONG_BREAK_LENGTH = 15;
 
@@ -39,7 +26,7 @@ class Pomodoro extends Component {
       sessionLength: SESSION_LENGTH,
       shortBreakLength: SHORT_BREAK_LENGTH,
       longBreakLength: LONG_BREAK_LENGTH,
-      settingsOn: false
+      currentPage: 'timer'
     };
   }
 
@@ -78,6 +65,7 @@ class Pomodoro extends Component {
       const { seconds } = this.state;
       this.setState({ seconds: seconds - 1 });
     }, 1000);
+    const { sessionLength } = this.state;
 
     this.timeout = setTimeout(() => {
       clearInterval(this.interval);
@@ -94,6 +82,7 @@ class Pomodoro extends Component {
 
       if (!isBreak) {
         this.startTimer(!isBreak);
+        saveSessionData(sessionLength);
       }
     }, seconds * 1000);
   };
@@ -141,7 +130,11 @@ class Pomodoro extends Component {
   };
 
   showSettings = () => {
-    this.setState({ settingsOn: true });
+    this.setState({ currentPage: 'settings' });
+  };
+
+  showSessionLog = () => {
+    this.setState({  currentPage: 'sessionLog' });
   };
 
   handleSettingsApply = (sessionLength, shortBreakLength, longBreakLength) => {
@@ -150,14 +143,18 @@ class Pomodoro extends Component {
       shortBreakLength: shortBreakLength,
       longBreakLength: longBreakLength,
       seconds: sessionLength,
-      settingsOn: false
+      currentPage: 'timer'
     });
   };
 
   handleCancel = () => {
     this.setState({
-      settingsOn: false
+      currentPage: 'timer'
     });
+  };
+
+  handleReturnFromSessionLog = () => {
+    this.setState({  currentPage: 'timer' });
   };
 
   render() {
@@ -172,50 +169,51 @@ class Pomodoro extends Component {
       sessionLength,
       shortBreakLength,
       longBreakLength,
-      settingsOn
+      currentPage
     } = this.state;
 
-    return settingsOn ? (
-      <TimerBox>
-        <Settings
+    return (
+      <div>
+        {currentPage === 'timer' && (
+          <div>
+            <Timer
+              isBreak={isBreak}
+              sessionCount={sessionCount}
+              seconds={seconds}
+              isPaused={isPaused}
+              timerIsRunning={timerIsRunning}
+              handleStartButton={this.handleStartButton}
+              handleStopButton={this.handleStopButton}
+              pause={this.pause}
+              unpause={this.unpause}
+              showSettings={this.showSettings}
+              showSessionLog={this.showSessionLog}
+            />
+            <Sound
+              url={gongSound}
+              playStatus={sessionSoundStatus}
+              onFinishedPlaying={this.stopSessionEndingSound}
+            />
+            <Sound
+              url={bongSound}
+              playStatus={breakSoundStatus}
+              onFinishedPlaying={this.stopBreakEndingSound}
+            />
+          </div>
+        )}
+        {currentPage === 'settings' && (
+          <Settings
           sessionLength={sessionLength}
           shortBreakLength={shortBreakLength}
           longBreakLength={longBreakLength}
           applySettings={this.handleSettingsApply}
           cancelSettings={this.handleCancel}
         />
-      </TimerBox>
-    ) : (
-      <TimerBox>
-        <h2>{isBreak && sessionCount % 4 === 0 && 'LONG'}</h2>
-        <h2>{isBreak ? 'BREAK' : 'SESSION'}</h2>
-        <RemainingTime remainingSeconds={seconds} />
-        <h4>
-          {(timerIsRunning || isPaused) && !isBreak
-            ? `Current session: ${sessionCount}`
-            : `Completed  ${sessionCount} sessions`}
-        </h4>
-
-        {/* <Sound
-          url={gongSound}
-          playStatus={sessionSoundStatus}
-          onFinishedPlaying={this.stopSessionEndingSound}
-        />
-        <Sound
-          url={bongSound}
-          playStatus={breakSoundStatus}
-          onFinishedPlaying={this.stopBreakEndingSound}
-        /> */}
-        <Button onClick={this.handleStartButton} disabled={timerIsRunning}>
-          start
-        </Button>
-        <Button onClick={this.handleStopButton}>stop</Button>
-        <Button onClick={isPaused ? this.unpause : this.pause}>
-          {isPaused ? 'resume' : 'pause'}
-        </Button>
-        <br />
-        <button onClick={this.showSettings} disabled={timerIsRunning}>Settings</button>
-      </TimerBox>
+        )}
+        {currentPage === 'sessionLog' && (
+          <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
+        )}
+      </div>
     );
   }
 }
