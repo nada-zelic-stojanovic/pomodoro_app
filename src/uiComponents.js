@@ -78,6 +78,10 @@ export const SessionList = styled.ul`
   list-style-type: circle;
 `;
 
+export const RedText = styled.span`
+  color: rgb(204, 0, 0);
+`;
+
 //Settings
 export const CancelButton = styled(Button)`
   background-color: rgb(204, 0, 0);

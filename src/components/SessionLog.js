@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { db } from '../firebase';
-import { SessionBox, SessionList, Button } from '../uiComponents';
+import { SessionBox, SessionList, Button, RedText } from '../uiComponents';
 
 class SessionLog extends Component {
   state = {
@@ -32,12 +32,12 @@ class SessionLog extends Component {
             <li key={log.id}>
               {log.date}
               {'  '}
-              <span className="redText">||</span>
+              <RedText>||</RedText>
               {'  '}
               Total sessions: {'  '}
               {log.totalSessionCount}
               {'  '}
-              <span className="redText">||</span>
+              <RedText>||</RedText>
               {'  '}
               Total time:{'  '}
               {log.totalTime}
