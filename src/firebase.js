@@ -15,31 +15,40 @@ export const db = firebase.firestore();
 
 export const saveSessionData = sessionLength => {
   const today = new Date().toDateString();
-  db.collection('sessions')
-    .where('date', '==', today)
-    .get()
-    .then(response => {
-      const { empty, docs } = response;
-      if (empty) {
-        db.collection('sessions').add({
-          date: today,
-          totalSessionCount: 1,
-          totalTime: sessionLength
-        });
-      } else {
-        const [doc] = docs;
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      // User is signed in.
+      db.collection('sessions')
+        .where('date', '==', today)
+        .where('userId', '==', user.uid)
+        .get()
+        .then(response => {
+          const { empty, docs } = response;
+          if (empty) {
+            db.collection('sessions').add({
+              date: today,
+              totalSessionCount: 1,
+              totalTime: sessionLength,
+              userId: user.uid
+            });
+          } else {
+            const [doc] = docs;
 
-        const log = {
-          id: doc.id,
-          totalSessionCount: doc.data().totalSessionCount,
-          totalTime: doc.data().totalTime
-        };
-        db.collection('sessions')
-          .doc(log.id)
-          .update({
-            totalSessionCount: log.totalSessionCount + 1,
-            totalTime: log.totalTime + sessionLength
-          });
-      }
-    });
+            const log = {
+              id: doc.id,
+              totalSessionCount: doc.data().totalSessionCount,
+              totalTime: doc.data().totalTime
+            };
+            db.collection('sessions')
+              .doc(log.id)
+              .update({
+                totalSessionCount: log.totalSessionCount + 1,
+                totalTime: log.totalTime + sessionLength
+              });
+          }
+        });
+    }
+  });
 };
+
+export const provider = new firebase.auth.GoogleAuthProvider();

@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import { db } from '../firebase';
-import { SessionBox, SessionList, Button, RedText } from '../uiComponents';
+import {
+  SessionBox,
+  SessionList,
+  ReturnButton,
+  RedText
+} from '../uiComponents';
+import firebase from 'firebase';
 
 class SessionLog extends Component {
   state = {
@@ -8,17 +14,26 @@ class SessionLog extends Component {
   };
 
   componentDidMount = () => {
-    db.collection('sessions')
-      .get()
-      .then(snapshot => {
-        const logs = snapshot.docs.map(doc => ({
-          id: doc.id,
-          date: doc.data().date,
-          totalSessionCount: doc.data().totalSessionCount,
-          totalTime: parseInt(doc.data().totalTime)
-        }));
-        this.setState({logs: logs});
-      });
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+        db.collection('sessions')
+          .get()
+          .then(snapshot => {
+            const logs = snapshot.docs.map(doc => ({
+              id: doc.id,
+              userId: doc.data().userId,
+              date: doc.data().date,
+              totalSessionCount: doc.data().totalSessionCount,
+              totalTime: parseInt(doc.data().totalTime)
+            }));
+            const userLogs = logs.filter(log => log.userId === user.uid);
+            this.setState({ logs: userLogs });
+          });
+      } else {
+        this.setState({ logs: [] });
+      }
+    });
   };
 
   render() {
@@ -26,7 +41,7 @@ class SessionLog extends Component {
 
     return (
       <SessionBox>
-        <Button onClick={this.props.returnToTimer}>Return</Button>
+        <ReturnButton onClick={this.props.returnToTimer}>Return</ReturnButton>
         <SessionList>
           {logs.map(log => (
             <li key={log.id}>

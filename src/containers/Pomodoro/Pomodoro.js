@@ -134,7 +134,7 @@ class Pomodoro extends Component {
   };
 
   showSessionLog = () => {
-    this.setState({  currentPage: 'sessionLog' });
+    this.setState({ currentPage: 'sessionLog' });
   };
 
   handleSettingsApply = (sessionLength, shortBreakLength, longBreakLength) => {
@@ -154,7 +154,7 @@ class Pomodoro extends Component {
   };
 
   handleReturnFromSessionLog = () => {
-    this.setState({  currentPage: 'timer' });
+    this.setState({ currentPage: 'timer' });
   };
 
   render() {
@@ -203,12 +203,12 @@ class Pomodoro extends Component {
         )}
         {currentPage === 'settings' && (
           <Settings
-          sessionLength={sessionLength}
-          shortBreakLength={shortBreakLength}
-          longBreakLength={longBreakLength}
-          applySettings={this.handleSettingsApply}
-          cancelSettings={this.handleCancel}
-        />
+            sessionLength={sessionLength}
+            shortBreakLength={shortBreakLength}
+            longBreakLength={longBreakLength}
+            applySettings={this.handleSettingsApply}
+            cancelSettings={this.handleCancel}
+          />
         )}
         {currentPage === 'sessionLog' && (
           <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
