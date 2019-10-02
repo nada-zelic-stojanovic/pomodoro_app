@@ -5,8 +5,9 @@ import bongSound from '../../assets/bong.mp3';
 import Settings from '../../components/Settings';
 import SessionLog from '../../components/SessionLog';
 import './Pomodoro.css';
-import { saveSessionData } from '../../firebase';
+import { saveSessionData, saveUserSettings, db } from '../../firebase';
 import Timer from '../../components/Timer';
+import firebase from 'firebase';
 
 const SESSION_LENGTH = 5;
 const SHORT_BREAK_LENGTH = 5;
@@ -34,6 +35,31 @@ class Pomodoro extends Component {
     if ('Notification' in window) {
       Notification.requestPermission();
     }
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        db.collection('settings')
+          .get()
+          .then(snapshot => {
+            const settings = snapshot.docs.map(doc => ({
+              id: doc.id,
+              userId: doc.data().userId,
+              sessionLength: doc.data().sessionLength,
+              shortBreakLength: doc.data().shortBreakLength,
+              longBreakLength: doc.data().longBreakLength
+            }));
+            const userSettings = settings.filter(
+              setting => setting.userId === user.uid
+            );
+            const [setting] = userSettings;
+            this.setState({
+              seconds: Number(setting.sessionLength),
+              sessionLength: Number(setting.sessionLength),
+              shortBreakLength: Number(setting.shortBreakLength),
+              longBreakLength: Number(setting.longBreakLength)
+            });
+          });
+      }
+    });
   };
 
   startTimer = isBreak => {
@@ -144,6 +170,11 @@ class Pomodoro extends Component {
       longBreakLength: longBreakLength,
       seconds: sessionLength,
       currentPage: 'timer'
+    });
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        saveUserSettings(sessionLength, shortBreakLength, longBreakLength);
+      }
     });
   };
 

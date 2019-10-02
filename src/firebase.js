@@ -51,4 +51,41 @@ export const saveSessionData = sessionLength => {
   });
 };
 
+export const saveUserSettings = (session, shortBreak, longBreak) => {
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      // User is signed in.
+      db.collection('settings')
+        .where('userId', '==', user.uid)
+        .get()
+        .then(response => {
+          const { empty, docs } = response;
+          if (empty) {
+            db.collection('settings').add({
+              userId: user.uid,
+              sessionLength: session,
+              shortBreakLength: shortBreak,
+              longBreakLength: longBreak
+            });
+          } else {
+            const [doc] = docs;
+            const userSettings = {
+              id: doc.id,
+              sessionLength: doc.data().sessionLength,
+              shortBreakLength: doc.data().shortBreakLength,
+              longBreakLength: doc.data().longBreakLength
+            };
+            db.collection('settings')
+              .doc(userSettings.id)
+              .update({
+                sessionLength: session,
+                shortBreakLength: shortBreak,
+                longBreakLength: longBreak
+              });
+          }
+        });
+    }
+  });
+};
+
 export const provider = new firebase.auth.GoogleAuthProvider();
