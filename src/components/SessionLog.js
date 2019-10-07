@@ -9,36 +9,38 @@ import {
 import firebase from 'firebase';
 
 class SessionLog extends Component {
-  state = {
-    logs: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      logs: []
+    };
+  }
 
   componentDidMount = () => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        // User is signed in.
-        db.collection('sessions')
-          .get()
-          .then(snapshot => {
-            const logs = snapshot.docs.map(doc => ({
-              id: doc.id,
-              userId: doc.data().userId,
-              date: doc.data().date,
-              totalSessionCount: doc.data().totalSessionCount,
-              totalTime: parseInt(doc.data().totalTime)
-            }));
-            const userLogs = logs.filter(log => log.userId === user.uid);
-            this.setState({ logs: userLogs });
-          });
-      } else {
-        this.setState({ logs: [] });
-      }
-    });
+    const { user } = this.props;
+    if (user) {
+      // User is signed in.
+      db.collection('sessions')
+        .where('userId', '==', user.uid)
+        .get()
+        .then(snapshot => {
+          const logs = snapshot.docs.map(doc => ({
+            id: doc.id,
+            userId: doc.data().userId,
+            date: doc.data().date,
+            totalSessionCount: doc.data().totalSessionCount,
+            totalTime: parseInt(doc.data().totalTime)
+          }));
+          this.setState({ logs: logs });
+        });
+    } else {
+      this.setState({ logs: [] });
+    }
   };
 
   render() {
     const { logs } = this.state;
-
+    console.log(this.state.totalTime);
     return (
       <SessionBox>
         <ReturnButton onClick={this.props.returnToTimer}>Return</ReturnButton>
