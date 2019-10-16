@@ -30,12 +30,6 @@ class App extends Component {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(result => {
-        const token = result.credential.accessToken;
-
-        const user = result.user;
-        this.setState({ user });
-      })
       .catch(function(error) {
         alert(error);
       });
@@ -45,10 +39,6 @@ class App extends Component {
     firebase
       .auth()
       .signOut()
-      .then(() => {
-        this.setState({ user: null });
-        alert('Signed Out successfully');
-      })
       .catch(error => {
         alert('Something went wrong..');
       });
