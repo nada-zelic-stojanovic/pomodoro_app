@@ -6,15 +6,11 @@ import {
   ReturnButton,
   RedText
 } from '../uiComponents';
-import firebase from 'firebase';
 
 class SessionLog extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      logs: []
-    };
-  }
+  state = {
+    logs: []
+  };
 
   componentDidMount = () => {
     const { user } = this.props;
@@ -31,7 +27,7 @@ class SessionLog extends Component {
             totalSessionCount: doc.data().totalSessionCount,
             totalTime: parseInt(doc.data().totalTime)
           }));
-          this.setState({ logs: logs });
+          this.setState({ logs });
         });
     } else {
       this.setState({ logs: [] });
@@ -40,7 +36,6 @@ class SessionLog extends Component {
 
   render() {
     const { logs } = this.state;
-    console.log(this.state.totalTime);
     return (
       <SessionBox>
         <ReturnButton onClick={this.props.returnToTimer}>Return</ReturnButton>

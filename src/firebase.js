@@ -26,7 +26,7 @@ export const saveSessionData = (userId, sessionLength) => {
           date: today,
           totalSessionCount: 1,
           totalTime: parseInt(sessionLength),
-          userId: userId
+          userId
         });
       } else {
         const [doc] = docs;
@@ -82,7 +82,8 @@ export const saveUserSettings = (
 };
 
 export const loadUserSettings = userId => {
-  db.collection('settings')
+  return db
+    .collection('settings')
     .where('userId', '==', userId)
     .get()
     .then(snapshot => {
@@ -93,13 +94,11 @@ export const loadUserSettings = userId => {
         shortBreakLength: doc.data().shortBreakLength,
         longBreakLength: doc.data().longBreakLength
       }));
+      return settings;
+    })
+    .then(settings => {
       const [setting] = settings;
-      this.setState({
-        seconds: Number(setting.sessionLength),
-        sessionLength: Number(setting.sessionLength),
-        shortBreakLength: Number(setting.shortBreakLength),
-        longBreakLength: Number(setting.longBreakLength)
-      });
+      return setting;
     });
 };
 

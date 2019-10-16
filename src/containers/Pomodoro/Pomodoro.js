@@ -38,9 +38,21 @@ class Pomodoro extends Component {
     if ('Notification' in window) {
       Notification.requestPermission();
     }
+  };
+
+  componentDidUpdate = prevProps => {
     const { user } = this.props;
     if (user) {
-      loadUserSettings(user.uid);
+      if (user !== prevProps.user) {
+        loadUserSettings(user.uid).then(userSetting => {
+          this.setState({
+            seconds: Number(userSetting.sessionLength),
+            sessionLength: Number(userSetting.sessionLength),
+            shortBreakLength: Number(userSetting.shortBreakLength),
+            longBreakLength: Number(userSetting.longBreakLength)
+          });
+        });
+      }
     }
   };
 
