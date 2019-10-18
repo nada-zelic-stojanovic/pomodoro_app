@@ -13,10 +13,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 export const db = firebase.firestore();
 
-export const saveSessionData = sessionLength => {
+export const saveSessionData = (userId, sessionLength) => {
   const today = new Date().toDateString();
   db.collection('sessions')
     .where('date', '==', today)
+    .where('userId', '==', userId)
     .get()
     .then(response => {
       const { empty, docs } = response;
@@ -24,7 +25,8 @@ export const saveSessionData = sessionLength => {
         db.collection('sessions').add({
           date: today,
           totalSessionCount: 1,
-          totalTime: sessionLength
+          totalTime: parseInt(sessionLength),
+          userId
         });
       } else {
         const [doc] = docs;
@@ -32,14 +34,72 @@ export const saveSessionData = sessionLength => {
         const log = {
           id: doc.id,
           totalSessionCount: doc.data().totalSessionCount,
-          totalTime: doc.data().totalTime
+          totalTime: parseInt(doc.data().totalTime)
         };
         db.collection('sessions')
           .doc(log.id)
           .update({
             totalSessionCount: log.totalSessionCount + 1,
-            totalTime: log.totalTime + sessionLength
+            totalTime: log.totalTime + parseInt(sessionLength)
           });
       }
     });
 };
+
+export const saveUserSettings = (
+  userId,
+  { sessionLength, shortBreakLength, longBreakLength }
+) => {
+  db.collection('settings')
+    .where('userId', '==', userId)
+    .get()
+    .then(response => {
+      const { empty, docs } = response;
+      if (empty) {
+        db.collection('settings').add({
+          userId: userId,
+          sessionLength,
+          shortBreakLength,
+          longBreakLength
+        });
+      } else {
+        const [doc] = docs;
+        const userSettings = {
+          id: doc.id,
+          sessionLength: doc.data().sessionLength,
+          shortBreakLength: doc.data().shortBreakLength,
+          longBreakLength: doc.data().longBreakLength
+        };
+        db.collection('settings')
+          .doc(userSettings.id)
+          .update({
+            sessionLength,
+            shortBreakLength,
+            longBreakLength
+          });
+      }
+    });
+};
+
+export const loadUserSettings = userId => {
+  return db
+    .collection('settings')
+    .where('userId', '==', userId)
+    .get()
+    .then(snapshot => {
+      const settings = snapshot.docs.map(doc => ({
+        id: doc.id,
+        userId: doc.data().userId,
+        sessionLength: doc.data().sessionLength,
+        shortBreakLength: doc.data().shortBreakLength,
+        longBreakLength: doc.data().longBreakLength
+      }));
+      return settings;
+    })
+    .then(settings => {
+      const [setting] = settings;
+      return setting;
+    });
+};
+
+export const provider = new firebase.auth.GoogleAuthProvider();

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Time, ClockBox} from '../uiComponents';
+import { Time, ClockBox } from '../uiComponents';
 
 const RemainingTime = ({ remainingSeconds }) => {
   const minutes = Math.floor(remainingSeconds / 60);
@@ -14,6 +14,5 @@ const RemainingTime = ({ remainingSeconds }) => {
     </div>
   );
 };
-
 
 export default RemainingTime;

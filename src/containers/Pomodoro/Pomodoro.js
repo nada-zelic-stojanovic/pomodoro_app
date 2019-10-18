@@ -5,7 +5,11 @@ import bongSound from '../../assets/bong.mp3';
 import Settings from '../../components/Settings';
 import SessionLog from '../../components/SessionLog';
 import './Pomodoro.css';
-import { saveSessionData } from '../../firebase';
+import {
+  saveSessionData,
+  saveUserSettings,
+  loadUserSettings
+} from '../../firebase';
 import Timer from '../../components/Timer';
 
 const SESSION_LENGTH = 5;
@@ -33,6 +37,22 @@ class Pomodoro extends Component {
   componentDidMount = () => {
     if ('Notification' in window) {
       Notification.requestPermission();
+    }
+  };
+
+  componentDidUpdate = prevProps => {
+    const { user } = this.props;
+    if (user) {
+      if (user !== prevProps.user) {
+        loadUserSettings(user.uid).then(userSetting => {
+          this.setState({
+            seconds: Number(userSetting.sessionLength),
+            sessionLength: Number(userSetting.sessionLength),
+            shortBreakLength: Number(userSetting.shortBreakLength),
+            longBreakLength: Number(userSetting.longBreakLength)
+          });
+        });
+      }
     }
   };
 
@@ -82,7 +102,9 @@ class Pomodoro extends Component {
 
       if (!isBreak) {
         this.startTimer(!isBreak);
-        saveSessionData(sessionLength);
+        if (this.props.user) {
+          saveSessionData(this.props.user.uid, sessionLength);
+        }
       }
     }, seconds * 1000);
   };
@@ -110,7 +132,7 @@ class Pomodoro extends Component {
     this.setState({
       timerIsRunning: false,
       seconds: seconds,
-      sessionCount: sessionCount,
+      sessionCount,
       isPaused: true
     });
   };
@@ -134,17 +156,25 @@ class Pomodoro extends Component {
   };
 
   showSessionLog = () => {
-    this.setState({  currentPage: 'sessionLog' });
+    this.setState({ currentPage: 'sessionLog' });
   };
 
   handleSettingsApply = (sessionLength, shortBreakLength, longBreakLength) => {
     this.setState({
-      sessionLength: sessionLength,
-      shortBreakLength: shortBreakLength,
-      longBreakLength: longBreakLength,
+      sessionLength,
+      shortBreakLength,
+      longBreakLength,
       seconds: sessionLength,
       currentPage: 'timer'
     });
+    const { user } = this.props;
+    if (user) {
+      saveUserSettings(user.uid, {
+        sessionLength,
+        shortBreakLength,
+        longBreakLength
+      });
+    }
   };
 
   handleCancel = () => {
@@ -154,7 +184,7 @@ class Pomodoro extends Component {
   };
 
   handleReturnFromSessionLog = () => {
-    this.setState({  currentPage: 'timer' });
+    this.setState({ currentPage: 'timer' });
   };
 
   render() {
@@ -171,7 +201,6 @@ class Pomodoro extends Component {
       longBreakLength,
       currentPage
     } = this.state;
-
     return (
       <div>
         {currentPage === 'timer' && (
@@ -203,15 +232,18 @@ class Pomodoro extends Component {
         )}
         {currentPage === 'settings' && (
           <Settings
-          sessionLength={sessionLength}
-          shortBreakLength={shortBreakLength}
-          longBreakLength={longBreakLength}
-          applySettings={this.handleSettingsApply}
-          cancelSettings={this.handleCancel}
-        />
+            sessionLength={sessionLength}
+            shortBreakLength={shortBreakLength}
+            longBreakLength={longBreakLength}
+            applySettings={this.handleSettingsApply}
+            cancelSettings={this.handleCancel}
+          />
         )}
         {currentPage === 'sessionLog' && (
-          <SessionLog returnToTimer={this.handleReturnFromSessionLog} />
+          <SessionLog
+            returnToTimer={this.handleReturnFromSessionLog}
+            user={this.props.user}
+          />
         )}
       </div>
     );

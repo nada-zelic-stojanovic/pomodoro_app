@@ -3,7 +3,7 @@ import styled from 'styled-components';
 //Pomodoro
 export const TimerBox = styled.div`
   position: absolute;
-  top: 40%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -71,7 +71,7 @@ export const ClockBox = styled.div`
 //SessionLog
 export const SessionBox = styled.div`
   position: absolute;
-  top: 5%;
+  top: 10%;
   left: 5%;
 `;
 export const SessionList = styled.ul`
@@ -80,6 +80,11 @@ export const SessionList = styled.ul`
 
 export const RedText = styled.span`
   color: rgb(204, 0, 0);
+`;
+
+export const ReturnButton = styled(Button)`
+  height: 25px;
+  margin: 15px;
 `;
 
 //Settings
@@ -104,4 +109,23 @@ export const Select = styled.select`
   font-size: 18px;
   float: right;
   margin-top: 5px;
+`;
+
+//Header
+export const HeaderSignInBox = styled.div`
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+`;
+
+export const HeaderSignOutBox = styled(HeaderSignInBox)`
+  top: 8%;
+`;
+
+export const SignOutButton = styled(Button)`
+  background-color: rgb(204, 0, 0);
+  height: 20px;
+  margin: 5px;
 `;
