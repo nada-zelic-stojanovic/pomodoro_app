@@ -12,9 +12,9 @@ import {
 } from '../../firebase';
 import Timer from '../../components/Timer';
 
-const SESSION_LENGTH = 5;
-const SHORT_BREAK_LENGTH = 5;
-const LONG_BREAK_LENGTH = 15;
+const SESSION_LENGTH = 25 * 60;
+const SHORT_BREAK_LENGTH = 5 * 60;
+const LONG_BREAK_LENGTH = 15 * 60;
 
 class Pomodoro extends Component {
   constructor(props) {
@@ -46,10 +46,10 @@ class Pomodoro extends Component {
       if (user !== prevProps.user) {
         loadUserSettings(user.uid).then(userSetting => {
           this.setState({
-            seconds: Number(userSetting.sessionLength),
-            sessionLength: Number(userSetting.sessionLength),
-            shortBreakLength: Number(userSetting.shortBreakLength),
-            longBreakLength: Number(userSetting.longBreakLength)
+            seconds: Number(userSetting.sessionLength) * 60,
+            sessionLength: Number(userSetting.sessionLength) * 60,
+            shortBreakLength: Number(userSetting.shortBreakLength) * 60,
+            longBreakLength: Number(userSetting.longBreakLength) * 60
           });
         });
       }
