@@ -161,10 +161,10 @@ class Pomodoro extends Component {
 
   handleSettingsApply = (sessionLength, shortBreakLength, longBreakLength) => {
     this.setState({
-      sessionLength,
-      shortBreakLength,
-      longBreakLength,
-      seconds: sessionLength,
+      sessionLength: sessionLength * 60,
+      shortBreakLength: shortBreakLength * 60,
+      longBreakLength: longBreakLength * 60,
+      seconds: sessionLength * 60,
       currentPage: 'timer'
     });
     const { user } = this.props;
