@@ -11,7 +11,7 @@ import {
   loadUserSettings
 } from '../../firebase';
 import Timer from '../../components/Timer';
-import { convertSecondsToMinutes } from '../../utils';
+import { convertSecondsToMinutes, createTimeString } from '../../utils';
 
 const SESSION_LENGTH = 25 * 60;
 const SHORT_BREAK_LENGTH = 5 * 60;
@@ -61,10 +61,10 @@ class Pomodoro extends Component {
 
     document.title = isPaused
       ? `Paused`
-      : `${isBreak ? 'Break ' : 'Session '} [ ${String(time.minutes).padStart(
-          2,
-          '0'
-        )} : ${String(time.seconds).padStart(2, '0')} ]`;
+      : `${isBreak ? 'Break ' : 'Session '} [ ${createTimeString(
+          time.minutes,
+          time.seconds
+        )} ]`;
   };
 
   startTimer = isBreak => {
