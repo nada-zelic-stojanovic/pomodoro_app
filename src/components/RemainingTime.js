@@ -8,7 +8,8 @@ const RemainingTime = ({ remainingSeconds }) => {
     <div>
       <ClockBox>
         <Time>
-          {minutes} : {seconds}
+          {minutes < 10 ? '0' + minutes : minutes} :{' '}
+          {seconds < 10 ? '0' + seconds : seconds}
         </Time>
       </ClockBox>
     </div>
