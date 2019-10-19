@@ -1,14 +1,12 @@
 import React from 'react';
 import { Time, ClockBox } from '../uiComponents';
-import { convertSecondsToMinutes, createTimeString } from '../utils';
+import { createTimeString } from '../utils';
 
 const RemainingTime = ({ remainingSeconds }) => {
-  const time = convertSecondsToMinutes(remainingSeconds);
-  const { minutes, seconds } = time;
   return (
     <div>
       <ClockBox>
-        <Time>{createTimeString(minutes, seconds)}</Time>
+        <Time>{createTimeString(remainingSeconds)}</Time>
       </ClockBox>
     </div>
   );
