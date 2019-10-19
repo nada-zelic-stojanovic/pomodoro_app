@@ -11,10 +11,11 @@ import {
   loadUserSettings
 } from '../../firebase';
 import Timer from '../../components/Timer';
+import { createTimeString } from '../../utils';
 
-const SESSION_LENGTH = 5;
-const SHORT_BREAK_LENGTH = 5;
-const LONG_BREAK_LENGTH = 15;
+const SESSION_LENGTH = 25 * 60;
+const SHORT_BREAK_LENGTH = 5 * 60;
+const LONG_BREAK_LENGTH = 15 * 60;
 
 class Pomodoro extends Component {
   constructor(props) {
@@ -46,14 +47,20 @@ class Pomodoro extends Component {
       if (user !== prevProps.user) {
         loadUserSettings(user.uid).then(userSetting => {
           this.setState({
-            seconds: Number(userSetting.sessionLength),
-            sessionLength: Number(userSetting.sessionLength),
-            shortBreakLength: Number(userSetting.shortBreakLength),
-            longBreakLength: Number(userSetting.longBreakLength)
+            seconds: Number(userSetting.sessionLength) * 60,
+            sessionLength: Number(userSetting.sessionLength) * 60,
+            shortBreakLength: Number(userSetting.shortBreakLength) * 60,
+            longBreakLength: Number(userSetting.longBreakLength) * 60
           });
         });
       }
     }
+
+    const { seconds, isBreak, isPaused } = this.state;
+
+    document.title = isPaused
+      ? `Paused`
+      : `${isBreak ? 'Break ' : 'Session '} [ ${createTimeString(seconds)} ]`;
   };
 
   startTimer = isBreak => {
@@ -161,10 +168,10 @@ class Pomodoro extends Component {
 
   handleSettingsApply = (sessionLength, shortBreakLength, longBreakLength) => {
     this.setState({
-      sessionLength,
-      shortBreakLength,
-      longBreakLength,
-      seconds: sessionLength,
+      sessionLength: sessionLength * 60,
+      shortBreakLength: shortBreakLength * 60,
+      longBreakLength: longBreakLength * 60,
+      seconds: sessionLength * 60,
       currentPage: 'timer'
     });
     const { user } = this.props;
@@ -201,6 +208,7 @@ class Pomodoro extends Component {
       longBreakLength,
       currentPage
     } = this.state;
+
     return (
       <div>
         {currentPage === 'timer' && (

@@ -12,9 +12,9 @@ class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shortBreakLength: this.props.shortBreakLength,
-      sessionLength: this.props.sessionLength,
-      longBreakLength: this.props.longBreakLength
+      shortBreakLength: this.props.shortBreakLength / 60,
+      sessionLength: this.props.sessionLength / 60,
+      longBreakLength: this.props.longBreakLength / 60
     };
   }
 

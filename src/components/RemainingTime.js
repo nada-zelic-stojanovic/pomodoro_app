@@ -1,15 +1,12 @@
 import React from 'react';
 import { Time, ClockBox } from '../uiComponents';
+import { createTimeString } from '../utils';
 
 const RemainingTime = ({ remainingSeconds }) => {
-  const minutes = Math.floor(remainingSeconds / 60);
-  const seconds = remainingSeconds % 60;
   return (
     <div>
       <ClockBox>
-        <Time>
-          {minutes} : {seconds}
-        </Time>
+        <Time>{createTimeString(remainingSeconds)}</Time>
       </ClockBox>
     </div>
   );
