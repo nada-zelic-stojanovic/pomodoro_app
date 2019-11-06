@@ -25,7 +25,7 @@ class SessionLog extends Component {
             userId: doc.data().userId,
             date: doc.data().date,
             totalSessionCount: doc.data().totalSessionCount,
-            totalTime: parseInt(doc.data().totalTime)
+            totalTime: parseInt(doc.data().totalTime) / 60
           }));
           this.setState({ logs });
         });
@@ -52,7 +52,7 @@ class SessionLog extends Component {
               <RedText>||</RedText>
               {'  '}
               Total time:{'  '}
-              {log.totalTime}
+              {log.totalTime} minutes
             </li>
           ))}
         </SessionList>
