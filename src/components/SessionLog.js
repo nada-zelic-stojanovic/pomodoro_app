@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
 import { db } from '../firebase';
-import {
-  SessionBox,
-  SessionList,
-  ReturnButton,
-  RedText
-} from '../uiComponents';
+import { SessionBox, SessionList, ReturnButton, RedText } from '../uiComponents';
 
 class SessionLog extends Component {
   state = {
-    logs: []
+    logs: [],
   };
 
   componentDidMount = () => {
@@ -25,7 +20,7 @@ class SessionLog extends Component {
             userId: doc.data().userId,
             date: doc.data().date,
             totalSessionCount: doc.data().totalSessionCount,
-            totalTime: parseInt(doc.data().totalTime) / 60
+            totalTime: parseInt(doc.data().totalTime) / 60,
           }));
           this.setState({ logs });
         });
@@ -44,12 +39,12 @@ class SessionLog extends Component {
             <li key={log.id}>
               {log.date}
               {'  '}
-              <RedText>||</RedText>
+              <RedText>---</RedText>
               {'  '}
               Total sessions: {'  '}
               {log.totalSessionCount}
               {'  '}
-              <RedText>||</RedText>
+              <RedText>---</RedText>
               {'  '}
               Total time:{'  '}
               {log.totalTime} minutes

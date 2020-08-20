@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 
-import {
-  Button,
-  CancelButton,
-  SettingsBox,
-  Select,
-  TimerBox
-} from '../uiComponents';
+import { Button, CancelButton, SettingsBox, Select, TimerBox } from '../uiComponents';
 
 class Settings extends Component {
   constructor(props) {
@@ -14,7 +8,7 @@ class Settings extends Component {
     this.state = {
       shortBreakLength: this.props.shortBreakLength / 60,
       sessionLength: this.props.sessionLength / 60,
-      longBreakLength: this.props.longBreakLength / 60
+      longBreakLength: this.props.longBreakLength / 60,
     };
   }
 
@@ -23,7 +17,7 @@ class Settings extends Component {
     const name = target.name;
 
     this.setState({
-      [name]: target.value
+      [name]: target.value,
     });
   };
 
@@ -35,26 +29,26 @@ class Settings extends Component {
 
   render() {
     let shortBreak = [];
-    for (let i = 1; i < 11; i++) {
+    for (let i = 1; i < 16; i++) {
       shortBreak.push(
         <option value={i} key={'sb' + i}>
           {i}
-        </option>
+        </option>,
       );
     }
 
     let session = [];
     let longBreak = [];
-    for (let i = 10; i < 31; i++) {
+    for (let i = 1; i < 31; i++) {
       longBreak.push(
         <option value={i} key={'lb' + i}>
           {i}
-        </option>
+        </option>,
       );
       session.push(
         <option value={i} key={'sl' + i}>
           {i}
-        </option>
+        </option>,
       );
     }
     return (
@@ -98,9 +92,7 @@ class Settings extends Component {
             </label>
             <br />
             <Button type="submit">Apply</Button>
-            <CancelButton onClick={this.props.cancelSettings}>
-              Cancel
-            </CancelButton>
+            <CancelButton onClick={this.props.cancelSettings}>Cancel</CancelButton>
           </form>
         </SettingsBox>
       </TimerBox>
