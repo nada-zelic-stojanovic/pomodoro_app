@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  HeaderSignInBox,
-  HeaderSignOutBox,
-  SignOutButton
-} from '../uiComponents';
+import { Button, HeaderSignInBox, HeaderSignOutBox, SignOutButton } from '../uiComponents';
 
 const Header = ({ user, loadingUser, signOut, signIn }) => {
   return (

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 //Pomodoro
 export const TimerBox = styled.div`
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -14,7 +14,7 @@ export const ControlButton = styled.button`
   height: 65px;
   border-radius: 50%;
   border-style: none;
-  background-color: rgb(204, 0, 0);
+  background-color: rgb(204, 68, 0);
   font-weight: 900;
   font-family: 'Lato', sans-serif;
   color: rgb(255, 255, 204);
@@ -34,7 +34,7 @@ export const ControlButton = styled.button`
 `;
 
 export const Button = styled.button`
-  background-color: rgb(0, 51, 0);
+  background-color: rgb(0, 102, 102);
   border-style: none;
   margin: 20px 5px;
   font-family: 'Lato', sans-serif;
@@ -64,8 +64,10 @@ export const Time = styled.div`
 export const ClockBox = styled.div`
   background-color: white;
   padding: 20px;
-  border-radius: 50px;
-  box-shadow: 2px 2px rgb(0, 51, 0);
+  border-radius: 10px;
+  border-color: rgb(0, 102, 102);
+  border-style: solid;
+  border-width: 2px;
 `;
 
 //SessionLog
@@ -89,7 +91,7 @@ export const ReturnButton = styled(Button)`
 
 //Settings
 export const CancelButton = styled(Button)`
-  background-color: rgb(204, 0, 0);
+  background-color: rgb(0, 179, 179);
 `;
 
 export const SettingsBox = styled.div`
@@ -103,7 +105,7 @@ export const Select = styled.select`
   width: 70px;
   height: 40px;
   border-radius: 10px;
-  border-color: rgb(0, 51, 0);
+  border-color: rgb(0, 102, 102);
   border-style: solid;
   border-width: 2.5px;
   font-size: 18px;
@@ -125,7 +127,7 @@ export const HeaderSignOutBox = styled(HeaderSignInBox)`
 `;
 
 export const SignOutButton = styled(Button)`
-  background-color: rgb(204, 0, 0);
-  height: 20px;
+  background-color: rgb(204, 68, 0);
+  height: 30px;
   margin: 5px;
 `;

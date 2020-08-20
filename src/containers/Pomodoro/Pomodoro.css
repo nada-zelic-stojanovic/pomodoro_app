@@ -1,11 +1,10 @@
 body {
-  background-color: rgb(255, 255, 179);
+  background-color: rgb(241, 212, 93);
   font-family: 'Lato', sans-serif;
   font-weight: 900;
-  color: rgb(0, 51, 0);
+  color: rgb(0, 102, 102);
 }
 
 body h1 {
-  font-size: 2.5em;
+  font-size: 2.7em;
 }
-
