@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "firebase": "^6.6.2",
+    "firebase": "^10.9.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-notifications-component": "^2.4.0",
